@@ -113,8 +113,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.actionView_data.setIcon(data_icon)
         self.actionDatabase.setIcon(database_icon)
         #Eline_icon=QIcon(os.path.join(icon_path, 'databricks.svg')) #databricks
-        Eline_icon=QIcon(os.path.join(icon_path, 'Eline_icons_simple.svg'))
-        self.Icon_label.setPixmap(QPixmap(os.path.join(icon_path, 'Eline_icons_simple.svg')))
+        Eline_icon=QIcon(os.path.join(icon_path, 'Eline20U_icons.svg'))
+        self.Icon_label.setPixmap(QPixmap(os.path.join(icon_path, 'Eline20U_icons.svg')))
         self.Icon_label.setScaledContents(True)
         self.setWindowIcon(Eline_icon)
         self.setIconSize(QSize(80,80))

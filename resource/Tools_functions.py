@@ -24,7 +24,7 @@ def get_datetime():
     return str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
 
 
-def creatPath(file_path):
+def createPath(file_path):
     """
     create a given path if not exist and return it
     :param file_path:

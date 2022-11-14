@@ -1,5 +1,5 @@
 # coding=utf-8
-import sys, os, time, math
+import sys, os, time, math,traceback
 from mcculw import ul
 from mcculw.enums import ULRange, InterfaceType
 from mcculw.ul import ULError, get_net_device_descriptor, create_daq_device
@@ -169,38 +169,48 @@ class E1608QThread(QThread):
         self.channel = channel
         self.repeat_n = repeat_n
         self.t_interval = t_interval
-        self._t_ms = int(self.t_interval * 1000)
-        self._host = host
-        self._port = port
-        self._board_num = 0
-        self._ul_range_list = [ULRange.BIP1VOLTS, ULRange.BIP2VOLTS, ULRange.BIP5VOLTS, ULRange.BIP10VOLTS]
-        self._UL_range = self._ul_range_list[ul_range_n]
+        self.t_ms = int(self.t_interval * 1000)
+        self.host = host
+        self.port = port
+        self.board_num = 0
+        self.ul_range_list = [ULRange.BIP1VOLTS, ULRange.BIP2VOLTS, ULRange.BIP5VOLTS, ULRange.BIP10VOLTS]
+        self.UL_range = self.ul_range_list[ul_range_n]
         ul.ignore_instacal()
-        self._run_flag = True
+        self.run_flag = True
         # 0 is run once, 1 is keep on monitoring until runtime runs out.
-        self._keep_on = keep_on
-        self.device = get_net_device_descriptor(self._host, self._port, 5)
-        create_daq_device(self._board_num, self.device)
+        self.keep_on = keep_on
+        self.__ini_device()
 
     def __del__(self):
-        self._keep_on = 0
+        self.keep_on = 0
         # self._run_flag=False
+    
+    def __ini_device(self):
+        try:
+            self.device = get_net_device_descriptor(self.host, self.port, 5)
+            create_daq_device(self.board_num, self.device)
+        except Exception as e:
+            print(traceback.format_exc()+str(e))
+            self.run_flag = False
+        else:
+            self.run_flag = True
+
 
     def run(self):
         t0 = time.time()
         run_time = 3600
-        while self._run_flag and time.time() - t0 < run_time:
+        while self.run_flag and time.time() - t0 < run_time:
             read_value = []
             sum_value = 0
             try:
                 i = 0
                 while i < self.repeat_n:
-                    self.msleep(self._t_ms)
+                    self.msleep(self.t_ms)
                     # Get a value from the device
                     # Use the a_in method for devices with a resolution <= 16
-                    value = ul.a_in(self._board_num, self.channel, self._UL_range)
+                    value = ul.a_in(self.board_num, self.channel, self.UL_range)
                     # Convert the raw value to engineering units
-                    eng_units_value = ul.to_eng_units(self._board_num, self._UL_range, value)
+                    eng_units_value = ul.to_eng_units(self.board_num, self.UL_range, value)
                     read_value.append(eng_units_value)
                     sum_value += eng_units_value
                     i += 1
@@ -213,7 +223,7 @@ class E1608QThread(QThread):
                 self.data_sig.emit([all_read, average_value])
                 print(f'emit data info: {[all_read, average_value]}')
                 self.msleep(100)
-                if self._keep_on == 0:
+                if self.keep_on == 0:
                     print('set run flag to False')
-                    ul.release_daq_device(self._board_num)
-                    self._run_flag = False
+                    ul.release_daq_device(self.board_num)
+                    self.run_flag = False
