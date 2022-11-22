@@ -10,7 +10,7 @@ from UI_DataViewPlot import Ui_Dialog
 # import my own matplotlib InitialPlot
 from resource.My_Matplotlib_PySide6 import Myplot, InitialPlot, NavigationToolbar, MonitorPlot
 # import my tool functions for usage
-from resource.Tools_functions import get_datetime, my_logger, creatPath, suppress_error, log_exception, log_exceptions, deco_count_time
+from resource.Tools_functions import get_datetime, my_logger, createPath, suppress_error, log_exception, log_exceptions, deco_count_time
 import pandas as pd
 import numpy as np
 # import class to display pandas dataFrame data
@@ -18,7 +18,7 @@ from resource.Class_Pandas_data_QTable import PandasInQTable
 #from Dependant.Class_Pandas_data_QTable import PandasInQTable
 from QtforPython_useful_tools import MyMsgBox
 log_path = os.path.join(os.getcwd(), 'log_info')
-creatPath(log_path)
+createPath(log_path)
 from UI.Calculate_derivative import cal_deriv, interp_derivative,GaussianFit,plot_Gaussfit_line
 # logger
 log_file = f'{time.strftime("%Y-%m-%d", time.localtime())}.log'

@@ -156,7 +156,7 @@ class E1608QThread(QThread):
     """
     data_sig = Signal(list)
 
-    def __init__(self, channel: int = 0, ul_range_n: int = 4, repeat_n: int = 1, t_interval: float = 0.1,
+    def __init__(self, channel: int = 0, ul_range_n: int = 3, repeat_n: int = 1, t_interval: float = 0.1,
                  keep_on: int = 0, host='10.30.95.167',port = 54211):
         """
         read the output signal from channel,and repeat n times for average,time_interval 0.1s

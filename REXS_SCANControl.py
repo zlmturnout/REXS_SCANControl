@@ -5,6 +5,7 @@ import random
 import sys
 import time
 import traceback
+from collections import namedtuple
 import pandas as pd
 # use PySide6
 import PySide6
@@ -23,7 +24,7 @@ from resource.Dict_DataFrame_Sqlite import (dict_to_csv, dict_to_excel,
 from resource.My_Matplotlib_PySide6 import (InitialPlot, MonitorPlot, Myplot,
                                              NavigationToolbar)
 # import my tool functions for usage
-from resource.Tools_functions import (creatPath, deco_count_time,
+from resource.Tools_functions import (createPath, deco_count_time,
                                        get_datetime, log_exception,
                                        log_exceptions, my_logger, to_log)
 # import data view plot UI
@@ -36,15 +37,17 @@ from UI.QtforPython_useful_tools import EmittingStr, MyMsgBox
 from UI.SQLDataViewPlot import ViewSQLiteData
 # import main UI function
 from UI.UI_REXS_SCAN import Ui_MainWindow
+# device address
+from Architect.Device_address import EndStationAddress
 # save path info
 FILE_PATH=os.getcwd()
 print(f'current path:{FILE_PATH}')
 save_path = os.path.join(FILE_PATH, 'save_data')
-creatPath(save_path)
+createPath(save_path)
 # sqlite database path
 SQLiteDB_path=save_path
 log_path = os.path.join(FILE_PATH, 'log_info')
-creatPath(log_path)
+createPath(log_path)
 
 # logger
 log_file = f'{time.strftime("%Y-%m-%d", time.localtime())}.log'
@@ -58,6 +61,49 @@ full_data = {'BPM-X pos(um)': self._plot_X_list, 'BPM-Z pos(um)': self._plot_Z_l
             'adc voltage(V)': self._plot_adc_list, 'current(pA)': self._plot_pAmeter_list,
             'time_stamp': self._time_stamp, 'scan set': self._scan_list}
 """
+
+"""DATA structure
+    namedtuple
+    Returns:
+        _type_: _description_
+"""
+ChannelDATA=namedtuple('ChannelDATA',field_names=["Name","Address","Device"])
+
+
+class DATAChannel(object):
+    """data structure for each channel
+
+    DATAChannel with property of [name,address,device,data]
+    """
+    def __init__(self,name:str,address:tuple,device:str) -> None:
+        self.__name=name
+        self.__address=address
+        self.__device=device
+        self.data=[]
+
+    @property
+    def name(self):
+        return self.__name
+    
+    @property
+    def address(self):
+        return self.__address
+    
+    @address.setter
+    def address(self,address:tuple):
+        self.__address=address
+
+    @property
+    def device(self):
+        return self.__device
+    
+    @device.setter
+    def device(self,dev:str):
+        self.__device=dev
+
+    def __repr__(self) -> str:
+        return f'name:{self.__name}\naddress:{self.__address}\ndevice:{self.__device}\ndata:{self.data}'
+    
 class REXSScanPlot(QMainWindow, Ui_MainWindow):
     # signal used
     scan_info_sig = Signal(dict)
@@ -172,8 +218,13 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     """
     end of MenuBar part
     """
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
 
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    start of info output part
+    """
+
     @log_exceptions(log_func=logger.error)
     def __ini_output(self):
         # set a timer to show current time
@@ -212,6 +263,44 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     def set_progress_Bar(self,status:int):
         self.progressBar.setValue(status)
 
+    """
+    end of info output part
+
+    """
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    start of data channel selection part
+    """
+    def __ini_DAQ(self):
+        """
+        initial data acquisition
+        """
+        self.endStation_Address=Q_REXS_DeviceAddress
+        self.Full_DataChannnel={}
+        self.all_channels={"TEY_V":self.ADC_TEY_checkBox,"Au_V":self.ADC_Au_checkBox,"PD_V":self.ADC_PD_checkBox,
+            "TEY_I":self.pA_TEY_checkBox,"Au_I":self.pA_Au_checkBox,"PD_I":self.pA_PD_checkBox}
+        self.active_data_dict={}
+        self.Select_endstation_cbx_currentIndexChanged['int'].connect(self.set_endstation)
+
+    @log_exceptions(log_func=logger.error)
+    @Slot(int)
+    def set_endstation(self,num:int):
+        # choose another station
+        self.endStation_Address=EndStationAddress[num]
+        
+    
+    def check_channels(self):
+        for name,checkbox in self.all_channels.items():
+            if checkbox.isChecked():
+                self.active_data_dict[name]=[]
+                self.Full_DataChannnel[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+
+    
+    """
+    end of data channel selection part
+    """   
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
 
     def closeEvent(self, event):
@@ -232,7 +321,11 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 event.ignore()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = REXSScanPlot()
-    win.show()
-    sys.exit(app.exec())
+    # app = QApplication(sys.argv)
+    # win = REXSScanPlot()
+    # win.show()
+    # sys.exit(app.exec())
+    ch1=DATAChannel('Au_REXS',address="10.30.95.167:54211",device="ADC")
+    ch1.data.append(1)
+    ch1.data.append(2)
+    print(ch1.__repr__())
