@@ -337,7 +337,7 @@ class ADCMonitor(QWidget,Ui_Form):
             if usr_define == 1:
                 file_in_path, filetype = QFileDialog.getSaveFileName(self, 'save file', usr_path, 'xlsx(*.xlsx)')
                 usr_path = os.path.dirname(file_in_path)
-                usr_file = os.path.basename(file_in_path)
+                usr_file =  os.path.basename(file_in_path)
                 filename = usr_file.split('.')[0]
             self.save_all_data(full_data, usr_path, filename)
         else:
