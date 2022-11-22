@@ -116,7 +116,8 @@ class ADCMonitor(QWidget,Ui_Form):
 
     example:
     """
-    emit_data_sig=Signal(float)
+    emit_data_sig=Signal(str,float)
+    close_sig=Signal(str)
 
     def __init__(self, parent =None, ADCname:str=None,host:str='10.30.95.167',port:int=54211,
         board_num:int=0,channel: int = 0, ul_range_n: int = 3, repeat_n: int = 1, t_interval: float = 0.1,keep_on: int = 0,emit_data=True) -> None:
@@ -205,6 +206,8 @@ class ADCMonitor(QWidget,Ui_Form):
         self.timestamp_list=list()
         self.monitor_on_flag=False
         self.start_time=time.time()
+        self.hide_details_flag=True
+        self.Details_box.hide()
 
         
     @Slot()
@@ -214,14 +217,29 @@ class ADCMonitor(QWidget,Ui_Form):
         if not self.monitor_on_flag:
             print(self.ul_range_num)
             self.start_time=time.time()
-            self._DaqQthread=E1608QThread(channel=self.channel,ul_range_n=self.ul_range_num,host=self.host,
-                port=self.port,board_num=self.board_num,keep_on=1,repeat_n=self.repeat_n,t_interval=self.t_interval)
-            self._DaqQthread.data_sig.connect(self.get_ReadValue)
-            self._DaqQthread.start()
-            self.monitor_on_flag=True
+            try:
+                self._DaqQthread=E1608QThread(channel=self.channel,ul_range_n=self.ul_range_num,host=self.host,
+                    port=self.port,board_num=self.board_num,keep_on=1,repeat_n=self.repeat_n,t_interval=self.t_interval)
+                self._DaqQthread.data_sig.connect(self.get_ReadValue)
+                self._DaqQthread.start()
+            except Exception as e:
+                print(traceback.format_exc()+str(e))
         else:
             print(f'{self.adc_name} already monitoring')
     
+    @Slot()
+    def on_Details_btn_clicked(self):
+        if self.hide_details_flag:
+            self.Details_box.show()
+            self.Details_btn.setText("<-->")
+            self.hide_details_flag=False
+        else:
+            self.Details_box.hide()
+            self.Details_btn.setText(">--<")
+            self.hide_details_flag=True
+
+
+
     @Slot(list)
     def get_ReadValue(self,read_list:list):
         """_summary_
@@ -229,6 +247,7 @@ class ADCMonitor(QWidget,Ui_Form):
         Args:
             data_list (list): Form:[[x1,x2,x3,x4],x]=[all_read, average_value]
         """
+        self.monitor_on_flag=True if not self.monitor_on_flag else False
         if isinstance(read_list[-1],float):
             new_value=read_list[-1]
             t_elapse=time.time()-self.start_time
@@ -237,7 +256,7 @@ class ADCMonitor(QWidget,Ui_Form):
             self.timestamp_list.append(get_datetime())
             # decide wether emit data  or not
             if self.emit_data:
-                self.emit_data_sig.emit(new_value)
+                self.emit_data_sig.emit(self.adc_name,new_value)
             # plot the data verus time
             max_length=200
             if len(self.data_list)>max_length:
@@ -354,7 +373,11 @@ class ADCMonitor(QWidget,Ui_Form):
         if self.monitor_on_flag:
             self.monitor_on_flag=False
             self._DaqQthread.__del__()
-        event.accept()
+            self.close_sig.emit(self.adc_name)
+            #event.accept()
+        else:
+            self.close_sig.emit(self.adc_name)
+            
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

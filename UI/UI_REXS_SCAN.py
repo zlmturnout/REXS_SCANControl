@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_REXS_SCAN.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -26,20 +26,18 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1000, 831)
+        MainWindow.resize(928, 831)
         self.actionView_data = QAction(MainWindow)
         self.actionView_data.setObjectName(u"actionView_data")
         self.actionDatabase = QAction(MainWindow)
         self.actionDatabase.setObjectName(u"actionDatabase")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.widget = QWidget(self.centralwidget)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(9, 9, 910, 765))
-        self.gridLayout_5 = QGridLayout(self.widget)
+        self.gridLayout = QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout_5 = QGridLayout()
         self.gridLayout_5.setObjectName(u"gridLayout_5")
-        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.Scan_infobox = QGroupBox(self.widget)
+        self.Scan_infobox = QGroupBox(self.centralwidget)
         self.Scan_infobox.setObjectName(u"Scan_infobox")
         self.Scan_infobox.setMinimumSize(QSize(600, 125))
         self.gridLayout_3 = QGridLayout(self.Scan_infobox)
@@ -69,14 +67,6 @@ class Ui_MainWindow(object):
 "border-top-color: rgb(33, 33, 33);}")
 
         self.gridLayout_3.addWidget(self.Open_PD_btn, 2, 1, 1, 1)
-
-        self.Icon_label = QLabel(self.Scan_infobox)
-        self.Icon_label.setObjectName(u"Icon_label")
-        sizePolicy.setHeightForWidth(self.Icon_label.sizePolicy().hasHeightForWidth())
-        self.Icon_label.setSizePolicy(sizePolicy)
-        self.Icon_label.setMinimumSize(QSize(100, 100))
-
-        self.gridLayout_3.addWidget(self.Icon_label, 2, 2, 1, 1)
 
         self.Channel_cbx = QComboBox(self.Scan_infobox)
         self.Channel_cbx.addItem("")
@@ -134,21 +124,21 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.Channel_cbx, 2, 0, 1, 1)
 
-        self.Connect_PVs_btn = QPushButton(self.Scan_infobox)
-        self.Connect_PVs_btn.setObjectName(u"Connect_PVs_btn")
+        self.Start_Acqusition_btn = QPushButton(self.Scan_infobox)
+        self.Start_Acqusition_btn.setObjectName(u"Start_Acqusition_btn")
         sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(2)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.Connect_PVs_btn.sizePolicy().hasHeightForWidth())
-        self.Connect_PVs_btn.setSizePolicy(sizePolicy1)
-        self.Connect_PVs_btn.setMinimumSize(QSize(200, 40))
-        self.Connect_PVs_btn.setMaximumSize(QSize(220, 16777215))
+        sizePolicy1.setHeightForWidth(self.Start_Acqusition_btn.sizePolicy().hasHeightForWidth())
+        self.Start_Acqusition_btn.setSizePolicy(sizePolicy1)
+        self.Start_Acqusition_btn.setMinimumSize(QSize(200, 40))
+        self.Start_Acqusition_btn.setMaximumSize(QSize(220, 16777215))
         font1 = QFont()
         font1.setFamilies([u"Arial"])
         font1.setPointSize(14)
         font1.setBold(True)
-        self.Connect_PVs_btn.setFont(font1)
-        self.Connect_PVs_btn.setStyleSheet(u"QPushButton{background-color: rgb(41, 173, 255);border:2px;border-radius:10px;padding:2px 4px;selection-color: rgb(255, 85, 127);color: rgb(255, 255, 255);border-style:inset;border-top-color: rgb(0, 170, 255);border-left-color: rgb(138, 138, 138);\n"
+        self.Start_Acqusition_btn.setFont(font1)
+        self.Start_Acqusition_btn.setStyleSheet(u"QPushButton{background-color: rgb(41, 173, 255);border:2px;border-radius:10px;padding:2px 4px;selection-color: rgb(255, 85, 127);color: rgb(255, 255, 255);border-style:inset;border-top-color: rgb(0, 170, 255);border-left-color: rgb(138, 138, 138);\n"
 "border-right-color: rgb(56, 56, 56);\n"
 "border-bottom-color: rgb(33, 33, 33);}\n"
 "\n"
@@ -159,7 +149,7 @@ class Ui_MainWindow(object):
 "border-left-color: rgb(56, 56, 56);\n"
 "border-top-color: rgb(33, 33, 33);}")
 
-        self.gridLayout_3.addWidget(self.Connect_PVs_btn, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.Start_Acqusition_btn, 0, 1, 1, 1)
 
         self.Channel_cbx_2 = QComboBox(self.Scan_infobox)
         self.Channel_cbx_2.addItem("")
@@ -207,10 +197,18 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.Channel_cbx_2, 0, 0, 1, 1)
 
+        self.Icon_label = QLabel(self.Scan_infobox)
+        self.Icon_label.setObjectName(u"Icon_label")
+        sizePolicy.setHeightForWidth(self.Icon_label.sizePolicy().hasHeightForWidth())
+        self.Icon_label.setSizePolicy(sizePolicy)
+        self.Icon_label.setMinimumSize(QSize(100, 100))
+
+        self.gridLayout_3.addWidget(self.Icon_label, 0, 2, 1, 1)
+
 
         self.gridLayout_5.addWidget(self.Scan_infobox, 0, 0, 1, 1)
 
-        self.tabWidget = QTabWidget(self.widget)
+        self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setMinimumSize(QSize(300, 125))
         self.tabWidget.setMaximumSize(QSize(400, 16777215))
@@ -275,14 +273,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.tabWidget, 0, 1, 1, 1)
 
-        self.Main_fig_box = QGroupBox(self.widget)
+        self.Main_fig_box = QGroupBox(self.centralwidget)
         self.Main_fig_box.setObjectName(u"Main_fig_box")
         self.Main_fig_box.setMinimumSize(QSize(600, 400))
         self.Main_fig_box.setCursor(QCursor(Qt.CrossCursor))
 
         self.gridLayout_5.addWidget(self.Main_fig_box, 1, 0, 1, 1)
 
-        self.Monitor_MDI = QMdiArea(self.widget)
+        self.Monitor_MDI = QMdiArea(self.centralwidget)
         self.Monitor_MDI.setObjectName(u"Monitor_MDI")
         self.Monitor_MDI.setMinimumSize(QSize(300, 400))
         self.Monitor_MDI.setMaximumSize(QSize(400, 16777215))
@@ -301,7 +299,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.Scan_set_Box = QGroupBox(self.widget)
+        self.Scan_set_Box = QGroupBox(self.centralwidget)
         self.Scan_set_Box.setObjectName(u"Scan_set_Box")
         self.Scan_set_Box.setMinimumSize(QSize(600, 120))
         self.gridLayout_4 = QGridLayout(self.Scan_set_Box)
@@ -563,7 +561,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.Scan_set_Box)
 
-        self.progressBar = QProgressBar(self.widget)
+        self.progressBar = QProgressBar(self.centralwidget)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setMinimumSize(QSize(200, 0))
         self.progressBar.setValue(0)
@@ -573,7 +571,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.Now_time = QLabel(self.widget)
+        self.Now_time = QLabel(self.centralwidget)
         self.Now_time.setObjectName(u"Now_time")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -620,7 +618,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Now_time)
 
-        self.Done_time = QLabel(self.widget)
+        self.Done_time = QLabel(self.centralwidget)
         self.Done_time.setObjectName(u"Done_time")
         sizePolicy3.setHeightForWidth(self.Done_time.sizePolicy().hasHeightForWidth())
         self.Done_time.setSizePolicy(sizePolicy3)
@@ -662,7 +660,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Done_time)
 
-        self.Cost_time = QLabel(self.widget)
+        self.Cost_time = QLabel(self.centralwidget)
         self.Cost_time.setObjectName(u"Cost_time")
         sizePolicy3.setHeightForWidth(self.Cost_time.sizePolicy().hasHeightForWidth())
         self.Cost_time.setSizePolicy(sizePolicy3)
@@ -710,7 +708,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addLayout(self.verticalLayout, 2, 0, 1, 1)
 
-        self.info_textbox = QTextEdit(self.widget)
+        self.info_textbox = QTextEdit(self.centralwidget)
         self.info_textbox.setObjectName(u"info_textbox")
         self.info_textbox.setEnabled(True)
         sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
@@ -720,19 +718,28 @@ class Ui_MainWindow(object):
         self.info_textbox.setSizePolicy(sizePolicy4)
         self.info_textbox.setMinimumSize(QSize(100, 100))
         self.info_textbox.setMaximumSize(QSize(400, 300))
+        palette9 = QPalette()
+        palette9.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette9.setBrush(QPalette.Inactive, QPalette.Text, brush6)
+        palette9.setBrush(QPalette.Disabled, QPalette.Text, brush7)
+        self.info_textbox.setPalette(palette9)
         font3 = QFont()
-        font3.setFamilies([u"Arial"])
-        font3.setPointSize(10)
+        font3.setFamilies([u"Cambria Math"])
+        font3.setPointSize(14)
+        font3.setBold(False)
         self.info_textbox.setFont(font3)
         self.info_textbox.setAcceptDrops(True)
         self.info_textbox.setReadOnly(True)
 
         self.gridLayout_5.addWidget(self.info_textbox, 2, 1, 1, 1)
 
+
+        self.gridLayout.addLayout(self.gridLayout_5, 0, 0, 1, 1)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1000, 28))
+        self.menubar.setGeometry(QRect(0, 0, 928, 28))
         self.menubar.setFont(font1)
         self.menuMenu = QMenu(self.menubar)
         self.menuMenu.setObjectName(u"menuMenu")
@@ -775,19 +782,19 @@ class Ui_MainWindow(object):
         self.actionDatabase.setText(QCoreApplication.translate("MainWindow", u"Database", None))
         self.Scan_infobox.setTitle(QCoreApplication.translate("MainWindow", u"Scan_info", None))
         self.Open_PD_btn.setText(QCoreApplication.translate("MainWindow", u"Set Range", None))
-        self.Icon_label.setText("")
         self.Channel_cbx.setItemText(0, QCoreApplication.translate("MainWindow", u"Ch3_X", None))
         self.Channel_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"Ch4_Y", None))
         self.Channel_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"Ch5_Z", None))
 
 #if QT_CONFIG(tooltip)
-        self.Connect_PVs_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Connect Electrometer6514", None))
+        self.Start_Acqusition_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Connect Electrometer6514", None))
 #endif // QT_CONFIG(tooltip)
-        self.Connect_PVs_btn.setText(QCoreApplication.translate("MainWindow", u"PMCmotor", None))
+        self.Start_Acqusition_btn.setText(QCoreApplication.translate("MainWindow", u"Start Acqusition", None))
         self.Channel_cbx_2.setItemText(0, QCoreApplication.translate("MainWindow", u"REXS_\u6563\u5c04\u7ad9", None))
         self.Channel_cbx_2.setItemText(1, QCoreApplication.translate("MainWindow", u"RXES_\u53d1\u5c04\u8c31\u7ad9", None))
         self.Channel_cbx_2.setItemText(2, QCoreApplication.translate("MainWindow", u"O-REXS_\u6709\u673a\u6563\u5c04", None))
 
+        self.Icon_label.setText("")
         self.ADC_TEY_checkBox.setText(QCoreApplication.translate("MainWindow", u"TEY_V", None))
         self.ADC_Au_checkBox.setText(QCoreApplication.translate("MainWindow", u"Au_V", None))
         self.ADC_PD_checkBox.setText(QCoreApplication.translate("MainWindow", u"PD_V", None))
@@ -833,8 +840,8 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
-"</style></head><body style=\" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:'Cambria Math'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:16pt; font-weight:700;\"><br /></p></body></html>", None))
         self.menuMenu.setTitle(QCoreApplication.translate("MainWindow", u"Menu", None))
         self.menuAnalysis.setTitle(QCoreApplication.translate("MainWindow", u"Analysis", None))
         self.menuInstrument.setTitle(QCoreApplication.translate("MainWindow", u"Instrument", None))

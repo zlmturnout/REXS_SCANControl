@@ -3,7 +3,7 @@ from epics import ca, caget, cainfo, camonitor, caput, PV, camonitor_clear, get_
 import time, random
 import sys, os
 
-from Linkage.EPICS_PV_names_08U1A import *
+from EPICS_PV_names import *
 
 """
 This is the control driver file for Monochromator motion control, including PV parameter and QThread 

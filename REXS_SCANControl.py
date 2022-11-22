@@ -37,6 +37,8 @@ from UI.QtforPython_useful_tools import EmittingStr, MyMsgBox
 from UI.SQLDataViewPlot import ViewSQLiteData
 # import main UI function
 from UI.UI_REXS_SCAN import Ui_MainWindow
+# ADC monitor
+from UI.ADC_Widget import ADCMonitor
 # device address
 from Architect.Device_address import EndStationAddress
 # save path info
@@ -79,7 +81,7 @@ class DATAChannel(object):
         self.__name=name
         self.__address=address
         self.__device=device
-        self.data=[]
+        self.data=[0]
 
     @property
     def name(self):
@@ -101,6 +103,17 @@ class DATAChannel(object):
     def device(self,dev:str):
         self.__device=dev
 
+    def add_data(self,value:float):
+        """add a new data value to data list 
+
+        Args:
+            value (float): _description_
+        """
+        self.data.append(value)
+        # maximal 1000 values
+        if len(self.data)>1000:
+            self.data=self.data[-1000:]
+
     def __repr__(self) -> str:
         return f'name:{self.__name}\naddress:{self.__address}\ndevice:{self.__device}\ndata:{self.data}'
     
@@ -117,6 +130,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         print('REXS_Scan_plot')
         self.__ini_output()
         self._ini_menu()
+        self.__ini_DAQ()
 
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
@@ -132,13 +146,13 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         # open data file
         OpenDATA = QAction('open data(&O)...', self)
         OpenDATA.setIcon(style.standardIcon(QStyle.SP_DialogOpenButton))
-        OpenDATA.setShortcut(Qt.CTRL + Qt.Key_O)
+        OpenDATA.setShortcut(Qt.CTRL | Qt.Key_O)
         OpenDATA.triggered.connect(self.open_datafile)
         self.menuMenu.addAction(OpenDATA)
         # save data
         SaveDATA = QAction('save data(&S)...', self)
         SaveDATA.setIcon(style.standardIcon(QStyle.SP_DialogSaveButton))
-        SaveDATA.setShortcut(Qt.CTRL + Qt.Key_S)
+        SaveDATA.setShortcut(Qt.CTRL | Qt.Key_S)
         SaveDATA.triggered.connect(self.save_all_data)
         self.menuMenu.addAction(SaveDATA)
         # show View data in analysis menuBar
@@ -277,25 +291,77 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         """
         initial data acquisition
         """
-        self.endStation_Address=Q_REXS_DeviceAddress
-        self.Full_DataChannnel={}
+        self.endStation_num=0
+        self.endStation_Address=EndStationAddress[self.endStation_num]
+        # data acqusition channel
+        self.Full_DataChannnels=dict()
         self.all_channels={"TEY_V":self.ADC_TEY_checkBox,"Au_V":self.ADC_Au_checkBox,"PD_V":self.ADC_PD_checkBox,
             "TEY_I":self.pA_TEY_checkBox,"Au_I":self.pA_Au_checkBox,"PD_I":self.pA_PD_checkBox}
         self.active_data_dict={}
+        #for adc monitors
+        self.All_monitors_dict={}
+        self.All_monitor_count=0
         self.Select_endstation_cbx_currentIndexChanged['int'].connect(self.set_endstation)
+
 
     @log_exceptions(log_func=logger.error)
     @Slot(int)
     def set_endstation(self,num:int):
         # choose another station
+        self.endStation_num=num
         self.endStation_Address=EndStationAddress[num]
-        
     
-    def check_channels(self):
+    @Slot()
+    def on_Start_Acqusition_btn_clicked(self):
+        """check data channel and start acquiring data
+        """
+        self.set_channels()
+        print(self.Full_DataChannnels)
+        for ch_name,daq_ch in self.Full_DataChannnels.items():
+            self.add_channel_monitor(daq_ch)
+    
+    def set_channels(self):
         for name,checkbox in self.all_channels.items():
             if checkbox.isChecked():
-                self.active_data_dict[name]=[]
-                self.Full_DataChannnel[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+                if name not in self.active_data_dict:
+                    self.active_data_dict[name]=[]
+                    self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+
+    def add_channel_monitor(self,daq_ch:DATAChannel):
+        """add one channel monitor 
+
+        Args:
+            daq_ch (DATAChannel): provide a DATAChannel 
+        """             
+        if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
+            # adc address=(host,port,channel,ul_range_n)
+            print(daq_ch.address,daq_ch.name)
+            self.All_monitor_count+=1
+            self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
+            board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
+            self.Monitor_MDI.addSubWindow(self.All_monitors_dict[daq_ch.name])
+            self.All_monitors_dict[daq_ch.name].show()
+            self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
+            self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
+    
+    @Slot(str,float)
+    def get_channel_data(self,ch_name:str,value:float):
+        print(f'channel: {ch_name} get a new value: {value}')
+        #update data list in DATAChannel with ch_name
+        self.Full_DataChannnels[ch_name].add_data(value)
+    
+    @Slot(str)
+    def close_channel_monitor(self,ch_name:str):
+        """remove data channel monitor
+
+        Args:
+            ch_name (str): _description_
+        """
+        print(f'now close channel monitor:{ch_name}')
+        self.All_monitors_dict[ch_name].close()
+        self.All_monitors_dict.pop(ch_name,0)
+        self.All_monitor_count-=1
+
 
     
     """
@@ -321,11 +387,11 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 event.ignore()
 
 if __name__ == "__main__":
-    # app = QApplication(sys.argv)
-    # win = REXSScanPlot()
-    # win.show()
-    # sys.exit(app.exec())
-    ch1=DATAChannel('Au_REXS',address="10.30.95.167:54211",device="ADC")
-    ch1.data.append(1)
-    ch1.data.append(2)
-    print(ch1.__repr__())
+    app = QApplication(sys.argv)
+    win = REXSScanPlot()
+    win.show()
+    sys.exit(app.exec())
+    # ch1=DATAChannel('Au_REXS',address="10.30.95.167:54211",device="ADC")
+    # ch1.data.append(1)
+    # ch1.data.append(2)
+    # print(ch1.__repr__())

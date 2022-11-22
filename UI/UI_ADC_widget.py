@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_ADC_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,28 +15,61 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
+    QHBoxLayout, QLabel, QPushButton, QSizePolicy,
+    QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(350, 350)
-        Form.setMinimumSize(QSize(350, 350))
+        Form.resize(300, 230)
+        Form.setMinimumSize(QSize(300, 230))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.verticalLayout_2 = QVBoxLayout()
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.Device_label = QLabel(Form)
-        self.Device_label.setObjectName(u"Device_label")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_plot = QVBoxLayout()
+        self.verticalLayout_plot.setObjectName(u"verticalLayout_plot")
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_plot)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.Details_btn = QPushButton(Form)
+        self.Details_btn.setObjectName(u"Details_btn")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Device_label.sizePolicy().hasHeightForWidth())
-        self.Device_label.setSizePolicy(sizePolicy)
-        self.Device_label.setMinimumSize(QSize(251, 40))
+        sizePolicy.setHeightForWidth(self.Details_btn.sizePolicy().hasHeightForWidth())
+        self.Details_btn.setSizePolicy(sizePolicy)
+        self.Details_btn.setMinimumSize(QSize(50, 30))
+        self.Details_btn.setMaximumSize(QSize(100, 40))
+        font = QFont()
+        font.setFamilies([u"Arial"])
+        font.setPointSize(18)
+        font.setBold(True)
+        self.Details_btn.setFont(font)
+        self.Details_btn.setLayoutDirection(Qt.LeftToRight)
+        self.Details_btn.setStyleSheet(u"QPushButton{background-color: rgb(76, 207, 255);selection-color: rgb(255, 85, 127);\n"
+"color: rgb(255, 255, 255);}\n"
+"\n"
+"QPushButton:hover{background-color:rgb(0, 170, 255);}\n"
+"\n"
+"QPushButton:pressed{background-color:rgb(255, 91, 58);}")
+        self.Details_btn.setAutoDefault(False)
+        self.Details_btn.setFlat(False)
+
+        self.horizontalLayout_3.addWidget(self.Details_btn)
+
+        self.Device_label = QLabel(Form)
+        self.Device_label.setObjectName(u"Device_label")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.Device_label.sizePolicy().hasHeightForWidth())
+        self.Device_label.setSizePolicy(sizePolicy1)
+        self.Device_label.setMinimumSize(QSize(200, 20))
         self.Device_label.setMaximumSize(QSize(3160, 40))
         palette = QPalette()
         brush = QBrush(QColor(255, 85, 0, 255))
@@ -70,25 +103,27 @@ class Ui_Form(object):
         palette.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush5)
 #endif
         self.Device_label.setPalette(palette)
-        font = QFont()
-        font.setFamilies([u"Arial"])
-        font.setPointSize(14)
-        font.setBold(True)
-        self.Device_label.setFont(font)
+        font1 = QFont()
+        font1.setFamilies([u"Arial"])
+        font1.setPointSize(14)
+        font1.setBold(True)
+        self.Device_label.setFont(font1)
         self.Device_label.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_2.addWidget(self.Device_label)
+        self.horizontalLayout_3.addWidget(self.Device_label)
 
-        self.verticalLayout_plot = QVBoxLayout()
-        self.verticalLayout_plot.setObjectName(u"verticalLayout_plot")
 
-        self.verticalLayout_2.addLayout(self.verticalLayout_plot)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
+        self.Details_box = QGroupBox(Form)
+        self.Details_box.setObjectName(u"Details_box")
+        self.verticalLayout_2 = QVBoxLayout(self.Details_box)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.Channel_cbx = QComboBox(Form)
+        self.Channel_cbx = QComboBox(self.Details_box)
         self.Channel_cbx.addItem("")
         self.Channel_cbx.addItem("")
         self.Channel_cbx.addItem("")
@@ -103,16 +138,16 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Inactive, QPalette.Text, brush2)
         palette1.setBrush(QPalette.Disabled, QPalette.Text, brush4)
         self.Channel_cbx.setPalette(palette1)
-        font1 = QFont()
-        font1.setFamilies([u"Arial"])
-        font1.setPointSize(16)
-        font1.setBold(True)
-        self.Channel_cbx.setFont(font1)
+        font2 = QFont()
+        font2.setFamilies([u"Arial"])
+        font2.setPointSize(16)
+        font2.setBold(True)
+        self.Channel_cbx.setFont(font2)
         self.Channel_cbx.setToolTipDuration(5000)
 
         self.horizontalLayout.addWidget(self.Channel_cbx)
 
-        self.Range_cbx = QComboBox(Form)
+        self.Range_cbx = QComboBox(self.Details_box)
         self.Range_cbx.addItem("")
         self.Range_cbx.addItem("")
         self.Range_cbx.addItem("")
@@ -125,7 +160,7 @@ class Ui_Form(object):
         palette2.setBrush(QPalette.Inactive, QPalette.Text, brush2)
         palette2.setBrush(QPalette.Disabled, QPalette.Text, brush4)
         self.Range_cbx.setPalette(palette2)
-        self.Range_cbx.setFont(font)
+        self.Range_cbx.setFont(font1)
         self.Range_cbx.setToolTipDuration(5000)
         self.Range_cbx.setEditable(False)
 
@@ -136,20 +171,17 @@ class Ui_Form(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.Start_monitor_btn = QPushButton(Form)
+        self.Start_monitor_btn = QPushButton(self.Details_box)
         self.Start_monitor_btn.setObjectName(u"Start_monitor_btn")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.Start_monitor_btn.sizePolicy().hasHeightForWidth())
-        self.Start_monitor_btn.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.Start_monitor_btn.sizePolicy().hasHeightForWidth())
+        self.Start_monitor_btn.setSizePolicy(sizePolicy)
         self.Start_monitor_btn.setMinimumSize(QSize(80, 40))
         self.Start_monitor_btn.setMaximumSize(QSize(100, 40))
-        font2 = QFont()
-        font2.setFamilies([u"Cambria"])
-        font2.setPointSize(14)
-        font2.setBold(True)
-        self.Start_monitor_btn.setFont(font2)
+        font3 = QFont()
+        font3.setFamilies([u"Cambria"])
+        font3.setPointSize(14)
+        font3.setBold(True)
+        self.Start_monitor_btn.setFont(font3)
         self.Start_monitor_btn.setStyleSheet(u"QPushButton{background-color: rgb(0, 170, 127);selection-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);}\n"
 "\n"
@@ -159,13 +191,13 @@ class Ui_Form(object):
 
         self.horizontalLayout_2.addWidget(self.Start_monitor_btn)
 
-        self.Stop_monitor_btn = QPushButton(Form)
+        self.Stop_monitor_btn = QPushButton(self.Details_box)
         self.Stop_monitor_btn.setObjectName(u"Stop_monitor_btn")
-        sizePolicy1.setHeightForWidth(self.Stop_monitor_btn.sizePolicy().hasHeightForWidth())
-        self.Stop_monitor_btn.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.Stop_monitor_btn.sizePolicy().hasHeightForWidth())
+        self.Stop_monitor_btn.setSizePolicy(sizePolicy)
         self.Stop_monitor_btn.setMinimumSize(QSize(80, 40))
         self.Stop_monitor_btn.setMaximumSize(QSize(100, 40))
-        self.Stop_monitor_btn.setFont(font2)
+        self.Stop_monitor_btn.setFont(font3)
         self.Stop_monitor_btn.setStyleSheet(u"QPushButton{background-color: rgb(0, 170, 127);selection-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);}\n"
 "\n"
@@ -175,13 +207,13 @@ class Ui_Form(object):
 
         self.horizontalLayout_2.addWidget(self.Stop_monitor_btn)
 
-        self.Savedata_btn = QPushButton(Form)
+        self.Savedata_btn = QPushButton(self.Details_box)
         self.Savedata_btn.setObjectName(u"Savedata_btn")
-        sizePolicy1.setHeightForWidth(self.Savedata_btn.sizePolicy().hasHeightForWidth())
-        self.Savedata_btn.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.Savedata_btn.sizePolicy().hasHeightForWidth())
+        self.Savedata_btn.setSizePolicy(sizePolicy)
         self.Savedata_btn.setMinimumSize(QSize(80, 40))
         self.Savedata_btn.setMaximumSize(QSize(100, 40))
-        self.Savedata_btn.setFont(font2)
+        self.Savedata_btn.setFont(font3)
         self.Savedata_btn.setStyleSheet(u"QPushButton{background-color: rgb(0, 170, 127);selection-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);}\n"
 "\n"
@@ -198,17 +230,25 @@ class Ui_Form(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
 
 
-        self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
+        self.verticalLayout_3.addWidget(self.Details_box)
+
+
+        self.gridLayout.addLayout(self.verticalLayout_3, 0, 0, 1, 1)
 
 
         self.retranslateUi(Form)
+
+        self.Details_btn.setDefault(False)
+
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
+        self.Details_btn.setText(QCoreApplication.translate("Form", u">--<", None))
         self.Device_label.setText(QCoreApplication.translate("Form", u"Device name", None))
+        self.Details_box.setTitle(QCoreApplication.translate("Form", u"ControlPannel", None))
         self.Channel_cbx.setItemText(0, QCoreApplication.translate("Form", u"CH0", None))
         self.Channel_cbx.setItemText(1, QCoreApplication.translate("Form", u"CH1", None))
         self.Channel_cbx.setItemText(2, QCoreApplication.translate("Form", u"CH2", None))
