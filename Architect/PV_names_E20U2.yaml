@@ -1,0 +1,57 @@
+SSRF_Status:
+
+BeamLine:
+  PGM1_E:
+    SE_SET: "X20U:OP:PGM1:Soft_Energy.VAL"  # set energy
+    SE_RBV: "X20U:OP:PGM1:Soft_Energy.RBV"  # energy read back
+    MV_RTRY: "X20U:OP:PGM1:Soft_Energy.RTRY" #retries
+  PGM1_MR:
+    MR_SET: "X20U:OP:PGM1:MR.VAL"  # set mirror angle <arcsec>
+    MR_RBV: "X20U:OP:PGM1:MR.RBV"  # Readback mirror angle <arcsec>
+    MR_MOV: "X20U:OP:PGM1:MR.MOVN"  # status mirror motor moving <0,1>
+  PGM1_GR:
+    GR_SET: "X20U:OP:PGM1:GR.VAL"  # set grate angle <arcsec>
+    GR_RBV: "X20U:OP:PGM1:GR.RBV"  # Readback grate angle <arcsec>
+    GR_MOV: "X20U:OP:PGM1:GR.MOVN"  # status mirror motor moving <0,1>
+  SLIT:
+    Slit1_X_RBV: "X20U:OP:SWSlit1:Size_X.RBV" # Slit1 X size readback
+    Slit1_Z_RBV: "X20U:OP:SWSlit1:Size_Z.RBV" # Slit1 Z size readback
+    Slit2_Z_RBV: "X20U:OP:SBSlit2:Size_Z.RBV" # Slit2 Z Size readback
+
+EPU60:
+  EN_GAP: "SR_ID:H20U60:CURRENT_ENGAP" # entrance GAP value
+  EX_GAP: "SR_ID:H20U60:CURRENT_EXGAP" # exit GAP value
+  GAP_SET: "SR_ID:H20U60:GAP_SETTING"  # GAP set value
+  GAP_VEL_SET: "SR_ID:H20U60:GAP_VEL_SETTING" # GAP velocity set
+  GAP_CUR_VEL: "SR_ID:H20U60:CURRENT_VEL_GAP" # GAP current velocity
+  SHIFT_SET: "SR_ID:H20U60:SHIFT_SETTING" # Shift set value
+  SHIFT_VEL_SET: "SR_ID:H20U60:SHIFT_VEL_SETTING" # Shift velocity set
+  MODE_SET: "SR_ID:H20U60:MODE_SETTING" # Mode LH=0/LH=1/Circular=1
+  MODE_CUR: "SR_ID:H20U60:CURRENT_MODE" # Current Mode
+
+REXS_Station:
+  SAM_X:
+    X_SET: "X20U:SoftEX1:REXS:SAM:X.VAL" # set sample x (um)
+    X_RBV: "X20U:SoftEX1:REXS:SAM:X.RBV" # sample X readback
+  SAM_Y:
+    Y_SET: "X20U:SoftEX1:REXS:SAM:Y.VAL" # set sample Y (um)
+    Y_RBV: "X20U:SoftEX1:REXS:SAM:Y.RBV" # sample Y readback
+  SAM_Z:
+    Z_SET: "X20U:SoftEX1:REXS:SAM:Z.VAL" # set sample Z (um)
+    Z_RBV: "X20U:SoftEX1:REXS:SAM:Z.RBV" # sample Z readback
+  SAM_theta:
+    theta_SET: "X20U:SoftEX1:REXS:SAM:theta.VAL" # set sample theta (DESC-')
+    theta_RBV: "X20U:SoftEX1:REXS:SAM:theta.RBV" # sample theta readback
+
+RXES_Station:
+  Grate_X:
+    X_SET: "X20U:SoftEX2:XES:Grate:X.VAL" # set grating X pos
+    X_RBV: "X20U:SoftEX1:XES:Grate:X.RBV" # grating X readback
+  Grate_R-X:
+    R-X_RBV: "X20U:SoftEX2:XES:Grate:R-X.RBV" # grating R-X readback
+  CCD_POS:
+    Y_RBV: "X20U:SoftEX2:XES:CCD:Y.RBV" # CCD Y position readback
+    Z_RBV: "X20U:SoftEX2:XES:CCD:Z.RBV" # CCD Z position readback
+    R-X_RBV: "X20U:SoftEX2:XES:CCD:R-X.RBV" # CCD R-X  readback 
+    
+  
