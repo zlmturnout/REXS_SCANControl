@@ -16,7 +16,8 @@ from PySide6.QtGui import (QAction, QDoubleValidator, QIcon, QIntValidator,
 from PySide6.QtWidgets import (QApplication, QFileDialog, QGridLayout,
                                QMainWindow, QMessageBox, QPushButton, QStyle,
                                QWidget)
-
+# pyepics for PV access
+from epics import ca, caget, cainfo, camonitor, caput, PV, get_pv
 # import data form to save dict data
 from resource.Dict_DataFrame_Sqlite import (dict_to_csv, dict_to_excel,
                                              dict_to_json, dict_to_SQLTable)
@@ -27,6 +28,9 @@ from resource.My_Matplotlib_PySide6 import (InitialPlot, MonitorPlot, Myplot,
 from resource.Tools_functions import (createPath, deco_count_time,
                                        get_datetime, log_exception,
                                        log_exceptions, my_logger, to_log)
+# import YAML load funcs
+from Architect.YAML_Read_load import read_yaml_data
+
 # import data view plot UI
 from UI.Data_View_Plot import DataViewPlot
 # import scan range UI
@@ -301,8 +305,9 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         #for adc monitors
         self.All_monitors_dict={}
         self.All_monitor_count=0
-        self.Select_endstation_cbx_currentIndexChanged['int'].connect(self.set_endstation)
-
+        self.Select_endstation_cbx.currentIndexChanged['int'].connect(self.set_endstation)
+        self.set_endstation(0)
+        self.Scan_Channel_cbx.currentIndexChanged['int'].connect(self.set_scan_X)
 
     @log_exceptions(log_func=logger.error)
     @Slot(int)
@@ -310,7 +315,40 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         # choose another station
         self.endStation_num=num
         self.endStation_Address=EndStationAddress[num]
-    
+        yaml_file=os.path.abspath('.\\Architect\\PV_names_E20U2.yaml')
+        self.load_station_PVs(yaml_file)
+
+    @log_exceptions(log_func=logger.error)
+    def load_station_PVs(self,yaml_file:str):
+        """
+        load station PV names according to the station selection
+        """
+        # remove all items in Scan_Channel_cbx
+        while self.Scan_Channel_cbx.count()>0:
+            self.Scan_Channel_cbx.removeItem(0)
+        self.scanX_channel_dict={} # scan X channels{"name":{key:PVname}...} with keys=["SET","RBV","MOVN"(optional)]
+        yaml_data=read_yaml_data(yaml_file)
+        REXS_PVs=yaml_data['REXS_Station']
+        RXES_PVs=yaml_data['RXES_Station']
+        Beamline_PVs=yaml_data['BeamLine']
+        # add beamline PVs
+        self.scanX_channel_dict['Energy']=Beamline_PVs['PGM1_E']
+        if self.Select_endstation_cbx.currentIndex()==0:
+            # for REXS station
+            for name,PVs in REXS_PVs.items():
+                self.scanX_channel_dict[name]=PVs
+            # for RXES station add BPM scan
+        elif self.Select_endstation_cbx.currentIndex()==1:
+            self.scanX_channel_dict["BPM_X"]=RXES_PVs["BPM_X"]
+            self.scanX_channel_dict["BPM_Z"]=RXES_PVs["BPM_Z"]
+        elif self.Select_endstation_cbx.currentIndex()==2:
+            #for O-REXS station 
+            pass
+        # add scan channel to cbx
+        for ch_name,pv_dict in self.scanX_channel_dict.items():
+            self.Scan_Channel_cbx.addItem(ch_name)
+
+
     @Slot()
     def on_Start_Acqusition_btn_clicked(self):
         """check data channel and start acquiring data
@@ -362,13 +400,40 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.All_monitors_dict.pop(ch_name,0)
         self.All_monitor_count-=1
 
+    @log_exceptions(log_func=logger.error)
+    @Slot(int)
+    def set_scan_X(self,index:int):
+        """set the PV name for scan X axis
+        """
+        scanX_name=self.Scan_Channel_cbx.currentText()
+        self.scan_PVset=self.scanX_channel_dict[scanX_name]["SET"]
+        self.scan_PVrbv=self.scanX_channel_dict[scanX_name]["RBV"]
+        self.scan_PVmovn=self.scanX_channel_dict[scanX_name].get('MOVN',None)
+        print(f'Now scan:{scanX_name} PV={self.scan_PVset} with readback: PV={self.scan_PVrbv} '
+        f'and movn: {self.scan_PVmovn}')
+        # add PV widget for monitoring
+        
 
+    
     
     """
     end of data channel selection part
     """   
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    start of Scan  part
+    """
 
+    """
+    end of Scan  part
+    """   
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    start of close event
+    """
     def closeEvent(self, event):
         if self._start_plot_flag == 1:
             self.raise_info('Stop the scan process before exit!')

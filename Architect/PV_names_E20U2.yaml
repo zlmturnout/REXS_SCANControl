@@ -2,17 +2,17 @@ SSRF_Status:
 
 BeamLine:
   PGM1_E:
-    SE_SET: "X20U:OP:PGM1:Soft_Energy.VAL"  # set energy
-    SE_RBV: "X20U:OP:PGM1:Soft_Energy.RBV"  # energy read back
+    SET: "X20U:OP:PGM1:Soft_Energy.VAL"  # set energy
+    RBV: "X20U:OP:PGM1:Soft_Energy.RBV"  # energy read back
     MV_RTRY: "X20U:OP:PGM1:Soft_Energy.RTRY" #retries
   PGM1_MR:
-    MR_SET: "X20U:OP:PGM1:MR.VAL"  # set mirror angle <arcsec>
-    MR_RBV: "X20U:OP:PGM1:MR.RBV"  # Readback mirror angle <arcsec>
-    MR_MOV: "X20U:OP:PGM1:MR.MOVN"  # status mirror motor moving <0,1>
+    SET: "X20U:OP:PGM1:MR.VAL"  # set mirror angle <arcsec>
+    RBV: "X20U:OP:PGM1:MR.RBV"  # Readback mirror angle <arcsec>
+    MOVN: "X20U:OP:PGM1:MR.MOVN"  # status mirror motor moving <0,1>
   PGM1_GR:
-    GR_SET: "X20U:OP:PGM1:GR.VAL"  # set grate angle <arcsec>
-    GR_RBV: "X20U:OP:PGM1:GR.RBV"  # Readback grate angle <arcsec>
-    GR_MOV: "X20U:OP:PGM1:GR.MOVN"  # status mirror motor moving <0,1>
+    SET: "X20U:OP:PGM1:GR.VAL"  # set grate angle <arcsec>
+    RBV: "X20U:OP:PGM1:GR.RBV"  # Readback grate angle <arcsec>
+    MOV: "X20U:OP:PGM1:GR.MOVN"  # status mirror motor moving <0,1>
   SLIT:
     Slit1_X_RBV: "X20U:OP:SWSlit1:Size_X.RBV" # Slit1 X size readback
     Slit1_Z_RBV: "X20U:OP:SWSlit1:Size_Z.RBV" # Slit1 Z size readback
@@ -31,17 +31,17 @@ EPU60:
 
 REXS_Station:
   SAM_X:
-    X_SET: "X20U:SoftEX1:REXS:SAM:X.VAL" # set sample x (um)
-    X_RBV: "X20U:SoftEX1:REXS:SAM:X.RBV" # sample X readback
+    SET: "X20U:SoftEX1:REXS:SAM:X.VAL" # set sample x (um)
+    RBV: "X20U:SoftEX1:REXS:SAM:X.RBV" # sample X readback
   SAM_Y:
-    Y_SET: "X20U:SoftEX1:REXS:SAM:Y.VAL" # set sample Y (um)
-    Y_RBV: "X20U:SoftEX1:REXS:SAM:Y.RBV" # sample Y readback
+    SET: "X20U:SoftEX1:REXS:SAM:Y.VAL" # set sample Y (um)
+    RBV: "X20U:SoftEX1:REXS:SAM:Y.RBV" # sample Y readback
   SAM_Z:
-    Z_SET: "X20U:SoftEX1:REXS:SAM:Z.VAL" # set sample Z (um)
-    Z_RBV: "X20U:SoftEX1:REXS:SAM:Z.RBV" # sample Z readback
+    SET: "X20U:SoftEX1:REXS:SAM:Z.VAL" # set sample Z (um)
+    RBV: "X20U:SoftEX1:REXS:SAM:Z.RBV" # sample Z readback
   SAM_theta:
-    theta_SET: "X20U:SoftEX1:REXS:SAM:theta.VAL" # set sample theta (DESC-')
-    theta_RBV: "X20U:SoftEX1:REXS:SAM:theta.RBV" # sample theta readback
+    SET: "X20U:SoftEX1:REXS:SAM:theta.VAL" # set sample theta (DESC-')
+    RBV: "X20U:SoftEX1:REXS:SAM:theta.RBV" # sample theta readback
 
 RXES_Station:
   Grate_X:
@@ -53,5 +53,13 @@ RXES_Station:
     Y_RBV: "X20U:SoftEX2:XES:CCD:Y.RBV" # CCD Y position readback
     Z_RBV: "X20U:SoftEX2:XES:CCD:Z.RBV" # CCD Z position readback
     R-X_RBV: "X20U:SoftEX2:XES:CCD:R-X.RBV" # CCD R-X  readback 
+  BPM_X:
+    SET: "X20U:SoftEX2:BPM:X.VAL" # set X position
+    RBV: "X20U:SoftEX2:BPM:X.RBV" # X position read back
+    MOVN: "X20U:SoftEX2:BPM:X.MOVN" # motor X moving(0,1)
+  BPM_Z:
+    SET: "X20U:SoftEX2:BPM:Z.VAL" # set Z position
+    RBV: "X20U:SoftEX2:BPM:Z.RBV" # Z position read back
+    MOVN: "X20U:SoftEX2:BPM:Z.MOVN" # motor Z moving(0,1)
     
   

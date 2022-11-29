@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>1153</width>
     <height>800</height>
    </rect>
   </property>
@@ -38,7 +38,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
-            <widget class="QComboBox" name="Channel_cbx_2">
+            <widget class="QComboBox" name="Select_endstation_cbx">
              <property name="minimumSize">
               <size>
                <width>100</width>
@@ -375,7 +375,7 @@ border-top-color: rgb(33, 33, 33);}</string>
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QComboBox" name="Channel_cbx">
+            <widget class="QComboBox" name="Scan_Channel_cbx">
              <property name="minimumSize">
               <size>
                <width>100</width>
@@ -628,21 +628,6 @@ border-top-color: rgb(33, 33, 33);}</string>
               <string notr="true">color: rgb(255, 85, 0);
 background-color: rgb(180, 249, 255);</string>
              </property>
-             <item>
-              <property name="text">
-               <string>Ch3_X</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Ch4_Y</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Ch5_Z</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="1" column="1">
@@ -799,7 +784,7 @@ border-top-color: rgb(33, 33, 33);}</string>
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -866,7 +851,7 @@ border-top-color: rgb(33, 33, 33);}</string>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QGroupBox" name="Main_fig_box">
@@ -2970,7 +2955,7 @@ color:rgb(255, 255, 255)</string>
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QMdiArea" name="Monitor_MDI">
@@ -3080,8 +3065,8 @@ color:rgb(255, 255, 255)</string>
             </property>
             <property name="font">
              <font>
-              <family>Cambria Math</family>
-              <pointsize>14</pointsize>
+              <family>Arial</family>
+              <pointsize>10</pointsize>
               <bold>false</bold>
              </font>
             </property>
@@ -3096,8 +3081,9 @@ color:rgb(255, 255, 255)</string>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Cambria Math'; font-size:14pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:16pt; font-weight:700;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;start program...&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:700;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -3114,7 +3100,7 @@ hr { height: 1px; border-width: 0; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>1153</width>
      <height>28</height>
     </rect>
    </property>

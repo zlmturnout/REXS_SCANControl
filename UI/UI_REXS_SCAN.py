@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1000, 800)
+        MainWindow.resize(1153, 800)
         MainWindow.setMinimumSize(QSize(1000, 800))
         self.actionView_data = QAction(MainWindow)
         self.actionView_data.setObjectName(u"actionView_data")
@@ -46,13 +46,13 @@ class Ui_MainWindow(object):
         self.Scan_infobox.setMinimumSize(QSize(600, 125))
         self.gridLayout = QGridLayout(self.Scan_infobox)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.Channel_cbx_2 = QComboBox(self.Scan_infobox)
-        self.Channel_cbx_2.addItem("")
-        self.Channel_cbx_2.addItem("")
-        self.Channel_cbx_2.addItem("")
-        self.Channel_cbx_2.setObjectName(u"Channel_cbx_2")
-        self.Channel_cbx_2.setMinimumSize(QSize(100, 40))
-        self.Channel_cbx_2.setMaximumSize(QSize(220, 16777215))
+        self.Select_endstation_cbx = QComboBox(self.Scan_infobox)
+        self.Select_endstation_cbx.addItem("")
+        self.Select_endstation_cbx.addItem("")
+        self.Select_endstation_cbx.addItem("")
+        self.Select_endstation_cbx.setObjectName(u"Select_endstation_cbx")
+        self.Select_endstation_cbx.setMinimumSize(QSize(100, 40))
+        self.Select_endstation_cbx.setMaximumSize(QSize(220, 16777215))
         palette = QPalette()
         brush = QBrush(QColor(255, 85, 0, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -94,17 +94,17 @@ class Ui_MainWindow(object):
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush)
 #endif
-        self.Channel_cbx_2.setPalette(palette)
+        self.Select_endstation_cbx.setPalette(palette)
         font = QFont()
         font.setFamilies([u"Arial"])
         font.setPointSize(12)
         font.setBold(True)
-        self.Channel_cbx_2.setFont(font)
-        self.Channel_cbx_2.setLayoutDirection(Qt.LeftToRight)
-        self.Channel_cbx_2.setStyleSheet(u"color: rgb(255, 85, 0);\n"
+        self.Select_endstation_cbx.setFont(font)
+        self.Select_endstation_cbx.setLayoutDirection(Qt.LeftToRight)
+        self.Select_endstation_cbx.setStyleSheet(u"color: rgb(255, 85, 0);\n"
 "background-color: rgb(180, 249, 255);")
 
-        self.gridLayout.addWidget(self.Channel_cbx_2, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.Select_endstation_cbx, 0, 0, 1, 1)
 
         self.Start_Acqusition_btn = QPushButton(self.Scan_infobox)
         self.Start_Acqusition_btn.setObjectName(u"Start_Acqusition_btn")
@@ -144,13 +144,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.Icon_label, 0, 2, 2, 1)
 
-        self.Channel_cbx = QComboBox(self.Scan_infobox)
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.setObjectName(u"Channel_cbx")
-        self.Channel_cbx.setMinimumSize(QSize(100, 40))
-        self.Channel_cbx.setMaximumSize(QSize(220, 16777215))
+        self.Scan_Channel_cbx = QComboBox(self.Scan_infobox)
+        self.Scan_Channel_cbx.setObjectName(u"Scan_Channel_cbx")
+        self.Scan_Channel_cbx.setMinimumSize(QSize(100, 40))
+        self.Scan_Channel_cbx.setMaximumSize(QSize(220, 16777215))
         palette1 = QPalette()
         palette1.setBrush(QPalette.Active, QPalette.WindowText, brush)
         palette1.setBrush(QPalette.Active, QPalette.Button, brush1)
@@ -182,13 +179,13 @@ class Ui_MainWindow(object):
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush)
 #endif
-        self.Channel_cbx.setPalette(palette1)
-        self.Channel_cbx.setFont(font)
-        self.Channel_cbx.setLayoutDirection(Qt.LeftToRight)
-        self.Channel_cbx.setStyleSheet(u"color: rgb(255, 85, 0);\n"
+        self.Scan_Channel_cbx.setPalette(palette1)
+        self.Scan_Channel_cbx.setFont(font)
+        self.Scan_Channel_cbx.setLayoutDirection(Qt.LeftToRight)
+        self.Scan_Channel_cbx.setStyleSheet(u"color: rgb(255, 85, 0);\n"
 "background-color: rgb(180, 249, 255);")
 
-        self.gridLayout.addWidget(self.Channel_cbx, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.Scan_Channel_cbx, 1, 0, 1, 1)
 
         self.Open_PD_btn = QPushButton(self.Scan_infobox)
         self.Open_PD_btn.setObjectName(u"Open_PD_btn")
@@ -283,12 +280,12 @@ class Ui_MainWindow(object):
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
-        self.widget = QWidget(self.splitter)
-        self.widget.setObjectName(u"widget")
-        self.verticalLayout_3 = QVBoxLayout(self.widget)
+        self.layoutWidget = QWidget(self.splitter)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.verticalLayout_3 = QVBoxLayout(self.layoutWidget)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.Main_fig_box = QGroupBox(self.widget)
+        self.Main_fig_box = QGroupBox(self.layoutWidget)
         self.Main_fig_box.setObjectName(u"Main_fig_box")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
@@ -303,7 +300,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.Scan_set_Box = QGroupBox(self.widget)
+        self.Scan_set_Box = QGroupBox(self.layoutWidget)
         self.Scan_set_Box.setObjectName(u"Scan_set_Box")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -571,7 +568,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.Scan_set_Box)
 
-        self.progressBar = QProgressBar(self.widget)
+        self.progressBar = QProgressBar(self.layoutWidget)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setMinimumSize(QSize(200, 0))
         self.progressBar.setValue(0)
@@ -581,7 +578,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.Now_time = QLabel(self.widget)
+        self.Now_time = QLabel(self.layoutWidget)
         self.Now_time.setObjectName(u"Now_time")
         sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
@@ -628,7 +625,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Now_time)
 
-        self.Done_time = QLabel(self.widget)
+        self.Done_time = QLabel(self.layoutWidget)
         self.Done_time.setObjectName(u"Done_time")
         sizePolicy5.setHeightForWidth(self.Done_time.sizePolicy().hasHeightForWidth())
         self.Done_time.setSizePolicy(sizePolicy5)
@@ -670,7 +667,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Done_time)
 
-        self.Cost_time = QLabel(self.widget)
+        self.Cost_time = QLabel(self.layoutWidget)
         self.Cost_time.setObjectName(u"Cost_time")
         sizePolicy5.setHeightForWidth(self.Cost_time.sizePolicy().hasHeightForWidth())
         self.Cost_time.setSizePolicy(sizePolicy5)
@@ -718,13 +715,13 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.verticalLayout)
 
-        self.splitter.addWidget(self.widget)
-        self.widget1 = QWidget(self.splitter)
-        self.widget1.setObjectName(u"widget1")
-        self.verticalLayout_2 = QVBoxLayout(self.widget1)
+        self.splitter.addWidget(self.layoutWidget)
+        self.layoutWidget1 = QWidget(self.splitter)
+        self.layoutWidget1.setObjectName(u"layoutWidget1")
+        self.verticalLayout_2 = QVBoxLayout(self.layoutWidget1)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.Monitor_MDI = QMdiArea(self.widget1)
+        self.Monitor_MDI = QMdiArea(self.layoutWidget1)
         self.Monitor_MDI.setObjectName(u"Monitor_MDI")
         self.Monitor_MDI.setMinimumSize(QSize(300, 400))
         self.Monitor_MDI.setMaximumSize(QSize(1800, 16777215))
@@ -741,7 +738,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.Monitor_MDI)
 
-        self.info_textbox = QTextEdit(self.widget1)
+        self.info_textbox = QTextEdit(self.layoutWidget1)
         self.info_textbox.setObjectName(u"info_textbox")
         self.info_textbox.setEnabled(True)
         sizePolicy6 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
@@ -757,8 +754,8 @@ class Ui_MainWindow(object):
         palette9.setBrush(QPalette.Disabled, QPalette.Text, brush7)
         self.info_textbox.setPalette(palette9)
         font3 = QFont()
-        font3.setFamilies([u"Cambria Math"])
-        font3.setPointSize(14)
+        font3.setFamilies([u"Arial"])
+        font3.setPointSize(10)
         font3.setBold(False)
         self.info_textbox.setFont(font3)
         self.info_textbox.setAcceptDrops(True)
@@ -766,7 +763,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.info_textbox)
 
-        self.splitter.addWidget(self.widget1)
+        self.splitter.addWidget(self.layoutWidget1)
 
         self.verticalLayout_4.addWidget(self.splitter)
 
@@ -776,7 +773,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1000, 28))
+        self.menubar.setGeometry(QRect(0, 0, 1153, 28))
         self.menubar.setFont(font1)
         self.menuMenu = QMenu(self.menubar)
         self.menuMenu.setObjectName(u"menuMenu")
@@ -804,7 +801,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         self.Start_scan_btn.setDefault(False)
         self.Clear_Save_btn.setDefault(False)
         self.Calculate_btn.setDefault(False)
@@ -818,19 +815,15 @@ class Ui_MainWindow(object):
         self.actionView_data.setText(QCoreApplication.translate("MainWindow", u"View_data", None))
         self.actionDatabase.setText(QCoreApplication.translate("MainWindow", u"Database", None))
         self.Scan_infobox.setTitle(QCoreApplication.translate("MainWindow", u"Scan_info", None))
-        self.Channel_cbx_2.setItemText(0, QCoreApplication.translate("MainWindow", u"REXS_\u6563\u5c04\u7ad9", None))
-        self.Channel_cbx_2.setItemText(1, QCoreApplication.translate("MainWindow", u"RXES_\u53d1\u5c04\u8c31\u7ad9", None))
-        self.Channel_cbx_2.setItemText(2, QCoreApplication.translate("MainWindow", u"O-REXS_\u6709\u673a\u6563\u5c04", None))
+        self.Select_endstation_cbx.setItemText(0, QCoreApplication.translate("MainWindow", u"REXS_\u6563\u5c04\u7ad9", None))
+        self.Select_endstation_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"RXES_\u53d1\u5c04\u8c31\u7ad9", None))
+        self.Select_endstation_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"O-REXS_\u6709\u673a\u6563\u5c04", None))
 
 #if QT_CONFIG(tooltip)
         self.Start_Acqusition_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Connect Electrometer6514", None))
 #endif // QT_CONFIG(tooltip)
         self.Start_Acqusition_btn.setText(QCoreApplication.translate("MainWindow", u"Start Acqusition", None))
         self.Icon_label.setText("")
-        self.Channel_cbx.setItemText(0, QCoreApplication.translate("MainWindow", u"Ch3_X", None))
-        self.Channel_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"Ch4_Y", None))
-        self.Channel_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"Ch5_Z", None))
-
         self.Open_PD_btn.setText(QCoreApplication.translate("MainWindow", u"Set Range", None))
         self.ADC_TEY_checkBox.setText(QCoreApplication.translate("MainWindow", u"TEY_V", None))
         self.ADC_Au_checkBox.setText(QCoreApplication.translate("MainWindow", u"Au_V", None))
@@ -877,8 +870,9 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
-"</style></head><body style=\" font-family:'Cambria Math'; font-size:14pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Arial'; font-size:16pt; font-weight:700;\"><br /></p></body></html>", None))
+"</style></head><body style=\" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:700;\">start program...</span></p>\n"
+"<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:700;\"><br /></p></body></html>", None))
         self.menuMenu.setTitle(QCoreApplication.translate("MainWindow", u"Menu", None))
         self.menuAnalysis.setTitle(QCoreApplication.translate("MainWindow", u"Analysis", None))
         self.menuInstrument.setTitle(QCoreApplication.translate("MainWindow", u"Instrument", None))
