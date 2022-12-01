@@ -35,7 +35,10 @@ from Architect.YAML_Read_load import read_yaml_data
 from UI.Data_View_Plot import DataViewPlot
 # import scan range UI
 from UI.Input_scan_range import InputScanRange, calculate_scan_range
-# import sub UI files
+# import PV monitor UI files
+from UI.PV_Monitor_Widget import PVMonitor
+# import scan range UI
+from UI.Input_scan_range import InputScanRange
 # import my message box
 from UI.QtforPython_useful_tools import EmittingStr, MyMsgBox
 from UI.SQLDataViewPlot import ViewSQLiteData
@@ -135,6 +138,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.__ini_output()
         self._ini_menu()
         self.__ini_DAQ()
+        self.__ini_scan_set()
 
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
@@ -299,8 +303,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.endStation_Address=EndStationAddress[self.endStation_num]
         # data acqusition channel
         self.Full_DataChannnels=dict()
-        self.all_channels={"TEY_V":self.ADC_TEY_checkBox,"Au_V":self.ADC_Au_checkBox,"PD_V":self.ADC_PD_checkBox,
-            "TEY_I":self.pA_TEY_checkBox,"Au_I":self.pA_Au_checkBox,"PD_I":self.pA_PD_checkBox}
+        self.adc_channels={"TEY_V":self.ADC_TEY_checkBox,"Au_V":self.ADC_Au_checkBox,"PD_V":self.ADC_PD_checkBox}
+        self.pA_channels={"TEY_I":self.pA_TEY_checkBox,"Au_I":self.pA_Au_checkBox,"PD_I":self.pA_PD_checkBox}
         self.active_data_dict={}
         #for adc monitors
         self.All_monitors_dict={}
@@ -308,6 +312,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.Select_endstation_cbx.currentIndexChanged['int'].connect(self.set_endstation)
         self.set_endstation(0)
         self.Scan_Channel_cbx.currentIndexChanged['int'].connect(self.set_scan_X)
+        self.set_scan_X(0)
 
     @log_exceptions(log_func=logger.error)
     @Slot(int)
@@ -353,17 +358,25 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     def on_Start_Acqusition_btn_clicked(self):
         """check data channel and start acquiring data
         """
+        self.Full_DataChannnels={}
         self.set_channels()
         print(self.Full_DataChannnels)
         for ch_name,daq_ch in self.Full_DataChannnels.items():
             self.add_channel_monitor(daq_ch)
     
     def set_channels(self):
-        for name,checkbox in self.all_channels.items():
+        # ADC channels
+        for name,checkbox in self.adc_channels.items():
             if checkbox.isChecked():
                 if name not in self.active_data_dict:
                     self.active_data_dict[name]=[]
                     self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+        # pAmeter channels
+        for name,checkbox in self.pA_channels.items():
+            if checkbox.isChecked():
+                if name not in self.active_data_dict:
+                    self.active_data_dict[name]=[]
+                    self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
 
     def add_channel_monitor(self,daq_ch:DATAChannel):
         """add one channel monitor 
@@ -373,7 +386,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         """             
         if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
             # adc address=(host,port,channel,ul_range_n)
-            print(daq_ch.address,daq_ch.name)
+            print(daq_ch.address[2],daq_ch.name)
             self.All_monitor_count+=1
             self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
             board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
@@ -424,6 +437,72 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     """
     start of Scan  part
     """
+    def __ini_scan_set(self):
+        #for PV monitor
+
+        self.pvmonitors_dict={}
+        self.pvmonitors_count=0
+
+    @Slot()
+    def on_Set_range_btn_clicked(self):
+        """set scan range
+        """
+        scanX_name=self.Scan_Channel_cbx.currentText()
+        self.pv_current_value=self.Add_pv_monitor(pvname=self.scan_PVrbv,tag="SCAN X axis")
+        if self.pv_current_value:
+            input_info = f'scan channel: {scanX_name}\nCurrent value:\n{scanX_name}:{self.pv_current_value}'
+            self.inputRange_dialog = InputScanRange(f'{scanX_name}', input_info)
+            self.inputRange_dialog.data_sig.connect(self.get_scan_range)
+            self.inputRange_dialog.show()
+        else:
+            self.raise_warning(f'access to {scanX_name} failed with None value get')
+
+    @Slot(list)
+    def get_scan_range(self, scan_range_list: list):
+        """
+        get the scan range,\n
+        scan range list: [scan_type,[min_E,min_E+1*step_E...max_E]] \n
+        :return:
+        """
+        if scan_range_list[-1]:
+            self._scan_info = scan_range_list
+            self.raise_info(f'Next will scan {scan_range_list[0]}, scan range:\n{scan_range_list[-1]},'
+                            f' total points: {len(scan_range_list[-1])}, you can start now')
+            self._scan_range_set_flag = 1
+            #print(self._scan_info)
+            min_value=scan_range_list[-1][0]
+            max_value=scan_range_list[-1][-1]
+            num=len(scan_range_list[-1])
+            self.Min_input.setText(f'{min_value}')
+            self.Max_input.setText(f'{max_value}')
+            self.Num_input.setText(f'{num}')
+            logger.info(f'get scan info: {self._scan_info}')
+
+
+
+    def Add_pv_monitor(self,pvname,tag=None):
+        print(f'get pvname: {pvname}')
+        if pvname not in self.pvmonitors_dict:
+            # add one monitor
+            self.pvmonitors_count+=1
+            self.pvmonitors_dict[pvname]=PVMonitor(PVname=pvname,TagName=tag)
+            self.Monitor_MDI.addSubWindow(self.pvmonitors_dict[pvname])
+            self.pvmonitors_dict[pvname].show()
+            self.pvmonitors_dict[pvname].close_sig.connect(self.close_pvmonitor)
+        else:
+            print(f'already have monitor: {pvname}')
+            self.statusLabel.setText(f'already have monitor: {pvname}')
+            self.pvmonitors_dict[pvname].showMaximized()
+        return self.pvmonitors_dict[pvname].get_pv_value()
+
+    @Slot(str)
+    def close_pvmonitor(self,pvname):
+        print(f'will close pvmonitor: {pvname}')
+        self.pvmonitors_dict[pvname].close()
+        self.pvmonitors_dict.pop(pvname,0)
+        self.pvmonitors_count-=1
+
+        
 
     """
     end of Scan  part
