@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_REXS_SCAN.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.0
+## Created by: Qt User Interface Compiler version 6.3.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -28,19 +28,21 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.NonModal)
-        MainWindow.resize(1286, 1071)
+        MainWindow.resize(1000, 800)
         MainWindow.setMinimumSize(QSize(1000, 800))
         MainWindow.setAutoFillBackground(False)
         self.actionView_data = QAction(MainWindow)
         self.actionView_data.setObjectName(u"actionView_data")
         self.actionDatabase = QAction(MainWindow)
         self.actionDatabase.setObjectName(u"actionDatabase")
+        self.actionAbout = QAction(MainWindow)
+        self.actionAbout.setObjectName(u"actionAbout")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.gridLayout_3 = QGridLayout(self.centralwidget)
+        self.gridLayout_4 = QGridLayout(self.centralwidget)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.gridLayout_3 = QGridLayout()
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.verticalLayout_4 = QVBoxLayout()
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.Scan_infobox = QGroupBox(self.centralwidget)
@@ -277,17 +279,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.tabWidget)
 
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
+        self.gridLayout_3.addLayout(self.horizontalLayout_4, 0, 0, 1, 2)
 
-        self.splitter = QSplitter(self.centralwidget)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Horizontal)
-        self.layoutWidget = QWidget(self.splitter)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.verticalLayout_3 = QVBoxLayout(self.layoutWidget)
+        self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.Main_fig_box = QGroupBox(self.layoutWidget)
+        self.Main_fig_box = QGroupBox(self.centralwidget)
         self.Main_fig_box.setObjectName(u"Main_fig_box")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
@@ -302,7 +298,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.Scan_set_Box = QGroupBox(self.layoutWidget)
+        self.Scan_set_Box = QGroupBox(self.centralwidget)
         self.Scan_set_Box.setObjectName(u"Scan_set_Box")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -683,7 +679,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.Scan_set_Box)
 
-        self.progressBar = QProgressBar(self.layoutWidget)
+        self.progressBar = QProgressBar(self.centralwidget)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setMinimumSize(QSize(200, 0))
         self.progressBar.setValue(0)
@@ -693,7 +689,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.Now_time = QLabel(self.layoutWidget)
+        self.Now_time = QLabel(self.centralwidget)
         self.Now_time.setObjectName(u"Now_time")
         sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
@@ -740,7 +736,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Now_time)
 
-        self.Done_time = QLabel(self.layoutWidget)
+        self.Done_time = QLabel(self.centralwidget)
         self.Done_time.setObjectName(u"Done_time")
         sizePolicy5.setHeightForWidth(self.Done_time.sizePolicy().hasHeightForWidth())
         self.Done_time.setSizePolicy(sizePolicy5)
@@ -782,7 +778,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Done_time)
 
-        self.Cost_time = QLabel(self.layoutWidget)
+        self.Cost_time = QLabel(self.centralwidget)
         self.Cost_time.setObjectName(u"Cost_time")
         sizePolicy5.setHeightForWidth(self.Cost_time.sizePolicy().hasHeightForWidth())
         self.Cost_time.setSizePolicy(sizePolicy5)
@@ -830,13 +826,13 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.verticalLayout)
 
-        self.splitter.addWidget(self.layoutWidget)
-        self.layoutWidget1 = QWidget(self.splitter)
-        self.layoutWidget1.setObjectName(u"layoutWidget1")
-        self.verticalLayout_2 = QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.Monitor_MDI = QMdiArea(self.layoutWidget1)
+
+        self.gridLayout_3.addLayout(self.verticalLayout_3, 1, 0, 1, 1)
+
+        self.splitter = QSplitter(self.centralwidget)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Vertical)
+        self.Monitor_MDI = QMdiArea(self.splitter)
         self.Monitor_MDI.setObjectName(u"Monitor_MDI")
         self.Monitor_MDI.setMinimumSize(QSize(300, 400))
         self.Monitor_MDI.setMaximumSize(QSize(1800, 16777215))
@@ -850,10 +846,8 @@ class Ui_MainWindow(object):
         self.Monitor_MDI.setDocumentMode(True)
         self.Monitor_MDI.setTabsMovable(False)
         self.Monitor_MDI.setTabShape(QTabWidget.Rounded)
-
-        self.verticalLayout_2.addWidget(self.Monitor_MDI)
-
-        self.info_textbox = QTextEdit(self.layoutWidget1)
+        self.splitter.addWidget(self.Monitor_MDI)
+        self.info_textbox = QTextEdit(self.splitter)
         self.info_textbox.setObjectName(u"info_textbox")
         self.info_textbox.setEnabled(True)
         sizePolicy6 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
@@ -875,20 +869,17 @@ class Ui_MainWindow(object):
         self.info_textbox.setFont(font3)
         self.info_textbox.setAcceptDrops(True)
         self.info_textbox.setReadOnly(True)
+        self.splitter.addWidget(self.info_textbox)
 
-        self.verticalLayout_2.addWidget(self.info_textbox)
-
-        self.splitter.addWidget(self.layoutWidget1)
-
-        self.verticalLayout_4.addWidget(self.splitter)
+        self.gridLayout_3.addWidget(self.splitter, 1, 1, 1, 1)
 
 
-        self.gridLayout_3.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
+        self.gridLayout_4.addLayout(self.gridLayout_3, 0, 0, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1286, 28))
+        self.menubar.setGeometry(QRect(0, 0, 1000, 28))
         self.menubar.setFont(font1)
         self.menuMenu = QMenu(self.menubar)
         self.menuMenu.setObjectName(u"menuMenu")
@@ -913,6 +904,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuhelp.menuAction())
         self.menuAnalysis.addAction(self.actionView_data)
         self.menuAnalysis.addAction(self.actionDatabase)
+        self.menuhelp.addAction(self.actionAbout)
 
         self.retranslateUi(MainWindow)
 
@@ -929,6 +921,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionView_data.setText(QCoreApplication.translate("MainWindow", u"View_data", None))
         self.actionDatabase.setText(QCoreApplication.translate("MainWindow", u"Database", None))
+        self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.Scan_infobox.setTitle(QCoreApplication.translate("MainWindow", u"Scan_info", None))
         self.Select_endstation_cbx.setItemText(0, QCoreApplication.translate("MainWindow", u"REXS_\u6563\u5c04\u7ad9", None))
         self.Select_endstation_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"RXES_\u53d1\u5c04\u8c31\u7ad9", None))
@@ -998,8 +991,8 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "</style></head><body style=\" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:700;\">start program...</span></p>\n"
-"<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:700;\"><br /></p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:700;\">start program...</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:700;\"><br /></p></body></html>", None))
         self.menuMenu.setTitle(QCoreApplication.translate("MainWindow", u"Menu", None))
         self.menuAnalysis.setTitle(QCoreApplication.translate("MainWindow", u"Analysis", None))
         self.menuInstrument.setTitle(QCoreApplication.translate("MainWindow", u"Instrument", None))

@@ -40,7 +40,7 @@ from UI.PV_Monitor_Widget import PVMonitor
 # import scan range UI
 from UI.Input_scan_range import InputScanRange
 # import my message box
-from UI.QtforPython_useful_tools import EmittingStr, MyMsgBox
+from UI.QtforPython_useful_tools import EmittingStr, MyMsgBox,AboutInfo
 from UI.SQLDataViewPlot import ViewSQLiteData
 # import main UI function
 from UI.UI_REXS_SCAN import Ui_MainWindow
@@ -166,6 +166,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         # show View data in analysis menuBar
         self.actionView_data.triggered.connect(self.show_full_data)
         self.actionDatabase.triggered.connect(self.view_sql_data)
+        self.actionAbout.triggered.connect(self.show_about_info)
         self.__init__Icons()
 
     @log_exceptions(log_func=logger.error)
@@ -177,9 +178,10 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         data_icon=QIcon(os.path.join(icon_path, 'databricks.svg'))
         database_icon=QIcon(os.path.join(icon_path, 'datacamp.svg'))
         PMC_motor_icon=QIcon(os.path.join(icon_path, 'pkgsrc.svg'))
-        pAmeter_icon=QIcon(os.path.join(icon_path, 'avast.svg'))
+        About_icon=QIcon(os.path.join(icon_path, 'avast.svg'))
         self.actionView_data.setIcon(data_icon)
         self.actionDatabase.setIcon(database_icon)
+        self.actionAbout.setIcon(About_icon)
         #Eline_icon=QIcon(os.path.join(icon_path, 'databricks.svg')) #databricks
         Eline_icon=QIcon(os.path.join(icon_path, 'Eline20U_icons.svg'))
         self.Icon_label.setPixmap(QPixmap(os.path.join(icon_path, 'Eline20U_icons.svg')))
@@ -237,6 +239,10 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.ViewData.show_data_table(full_pd_data)
         self.ViewData.show()
 
+    @Slot()
+    def show_about_info(self):
+        self.about_info=AboutInfo()
+        self.about_info.show()
     """
     end of MenuBar part
     """

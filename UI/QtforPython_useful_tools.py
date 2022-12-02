@@ -1,10 +1,11 @@
 import sys, os, time, typing
 import datetime, traceback
 from PySide6.QtWidgets import QWidget, QPushButton, QApplication, QMainWindow, QGridLayout, QLabel, QToolBar, QDialog, \
-    QMessageBox, QTableWidgetItem
+    QMessageBox,QStyle
 from PySide6.QtCore import Qt, QTimer, Slot, QThread, Signal, QDate, QDateTime,QObject
 from PySide6 import QtCore, QtWidgets
 from UI_my_msg_box import Ui_Dialog
+from UI_About_box import Ui_Form
 
 
 
@@ -145,6 +146,14 @@ class MyMsgBox(QDialog, Ui_Dialog):
 def get_info(info: str):
     print(info)
 
+class AboutInfo(QWidget,Ui_Form):
+
+    def __init__(self,parent=None):
+        super(AboutInfo,self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle("About the Program")
+        style = QApplication.style()
+        self.setWindowIcon(style.standardIcon(QStyle.SP_DesktopIcon))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
