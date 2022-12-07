@@ -39,10 +39,10 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(u"actionAbout")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.gridLayout_4 = QGridLayout(self.centralwidget)
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.gridLayout_3 = QGridLayout()
+        self.gridLayout_3 = QGridLayout(self.centralwidget)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.Scan_infobox = QGroupBox(self.centralwidget)
@@ -279,11 +279,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.tabWidget)
 
 
-        self.gridLayout_3.addLayout(self.horizontalLayout_4, 0, 0, 1, 2)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
 
-        self.verticalLayout_3 = QVBoxLayout()
+        self.splitter_2 = QSplitter(self.centralwidget)
+        self.splitter_2.setObjectName(u"splitter_2")
+        self.splitter_2.setOrientation(Qt.Horizontal)
+        self.widget = QWidget(self.splitter_2)
+        self.widget.setObjectName(u"widget")
+        self.verticalLayout_3 = QVBoxLayout(self.widget)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.Main_fig_box = QGroupBox(self.centralwidget)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.Main_fig_box = QGroupBox(self.widget)
         self.Main_fig_box.setObjectName(u"Main_fig_box")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
@@ -296,9 +302,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.Main_fig_box)
 
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.Scan_set_Box = QGroupBox(self.centralwidget)
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.Scan_set_Box = QGroupBox(self.widget)
         self.Scan_set_Box.setObjectName(u"Scan_set_Box")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -309,15 +315,15 @@ class Ui_MainWindow(object):
         self.Scan_set_Box.setMaximumSize(QSize(16777215, 150))
         self.gridLayout_2 = QGridLayout(self.Scan_set_Box)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.verticalLayout_5 = QVBoxLayout()
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.label = QLabel(self.Scan_set_Box)
         self.label.setObjectName(u"label")
         sizePolicy3.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy3)
-        self.label.setMinimumSize(QSize(50, 40))
+        self.label.setMinimumSize(QSize(50, 30))
         self.label.setFont(font1)
         self.label.setAlignment(Qt.AlignCenter)
 
@@ -330,7 +336,7 @@ class Ui_MainWindow(object):
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.Max_input.sizePolicy().hasHeightForWidth())
         self.Max_input.setSizePolicy(sizePolicy4)
-        self.Max_input.setMinimumSize(QSize(120, 40))
+        self.Max_input.setMinimumSize(QSize(120, 30))
         palette3 = QPalette()
         brush8 = QBrush(QColor(255, 255, 255, 255))
         brush8.setStyle(Qt.SolidPattern)
@@ -356,7 +362,7 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName(u"label_2")
         sizePolicy3.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy3)
-        self.label_2.setMinimumSize(QSize(30, 40))
+        self.label_2.setMinimumSize(QSize(30, 30))
         self.label_2.setFont(font1)
         self.label_2.setAlignment(Qt.AlignCenter)
 
@@ -366,7 +372,7 @@ class Ui_MainWindow(object):
         self.Min_input.setObjectName(u"Min_input")
         sizePolicy4.setHeightForWidth(self.Min_input.sizePolicy().hasHeightForWidth())
         self.Min_input.setSizePolicy(sizePolicy4)
-        self.Min_input.setMinimumSize(QSize(120, 40))
+        self.Min_input.setMinimumSize(QSize(120, 30))
         palette4 = QPalette()
         palette4.setBrush(QPalette.Active, QPalette.Text, brush8)
         palette4.setBrush(QPalette.Active, QPalette.Base, brush9)
@@ -388,7 +394,7 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName(u"label_3")
         sizePolicy3.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy3)
-        self.label_3.setMinimumSize(QSize(40, 40))
+        self.label_3.setMinimumSize(QSize(40, 30))
         self.label_3.setFont(font1)
         self.label_3.setAlignment(Qt.AlignCenter)
 
@@ -398,7 +404,7 @@ class Ui_MainWindow(object):
         self.Num_input.setObjectName(u"Num_input")
         sizePolicy4.setHeightForWidth(self.Num_input.sizePolicy().hasHeightForWidth())
         self.Num_input.setSizePolicy(sizePolicy4)
-        self.Num_input.setMinimumSize(QSize(120, 40))
+        self.Num_input.setMinimumSize(QSize(120, 30))
         palette5 = QPalette()
         palette5.setBrush(QPalette.Active, QPalette.Text, brush8)
         palette5.setBrush(QPalette.Active, QPalette.Base, brush9)
@@ -417,7 +423,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addWidget(self.Num_input)
 
 
-        self.verticalLayout_5.addLayout(self.horizontalLayout_5)
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
@@ -425,7 +431,7 @@ class Ui_MainWindow(object):
         self.Start_scan_btn.setObjectName(u"Start_scan_btn")
         sizePolicy4.setHeightForWidth(self.Start_scan_btn.sizePolicy().hasHeightForWidth())
         self.Start_scan_btn.setSizePolicy(sizePolicy4)
-        self.Start_scan_btn.setMinimumSize(QSize(120, 50))
+        self.Start_scan_btn.setMinimumSize(QSize(120, 45))
         palette6 = QPalette()
         brush10 = QBrush(QColor(255, 88, 152, 255))
         brush10.setStyle(Qt.SolidPattern)
@@ -512,7 +518,7 @@ class Ui_MainWindow(object):
         self.Stop_scan_btm.setObjectName(u"Stop_scan_btm")
         sizePolicy4.setHeightForWidth(self.Stop_scan_btm.sizePolicy().hasHeightForWidth())
         self.Stop_scan_btm.setSizePolicy(sizePolicy4)
-        self.Stop_scan_btm.setMinimumSize(QSize(120, 50))
+        self.Stop_scan_btm.setMinimumSize(QSize(120, 45))
         self.Stop_scan_btm.setFont(font2)
         self.Stop_scan_btm.setFocusPolicy(Qt.WheelFocus)
         self.Stop_scan_btm.setStyleSheet(u"QPushButton{background-color:rgb(255, 91, 58);border:2px;border-radius:10px;padding:2px 4px;selection-color: rgb(255, 85, 127);color:rgb(255, 255, 255);border-style:inset;border-top-color: rgb(164, 160, 181);border-left-color: rgb(138, 138, 138);\n"
@@ -532,7 +538,7 @@ class Ui_MainWindow(object):
         self.Clear_Save_btn.setObjectName(u"Clear_Save_btn")
         sizePolicy4.setHeightForWidth(self.Clear_Save_btn.sizePolicy().hasHeightForWidth())
         self.Clear_Save_btn.setSizePolicy(sizePolicy4)
-        self.Clear_Save_btn.setMinimumSize(QSize(120, 50))
+        self.Clear_Save_btn.setMinimumSize(QSize(120, 45))
         palette7 = QPalette()
         palette7.setBrush(QPalette.Active, QPalette.WindowText, brush10)
         palette7.setBrush(QPalette.Active, QPalette.Button, brush11)
@@ -603,7 +609,7 @@ class Ui_MainWindow(object):
         self.Calculate_btn.setObjectName(u"Calculate_btn")
         sizePolicy4.setHeightForWidth(self.Calculate_btn.sizePolicy().hasHeightForWidth())
         self.Calculate_btn.setSizePolicy(sizePolicy4)
-        self.Calculate_btn.setMinimumSize(QSize(120, 50))
+        self.Calculate_btn.setMinimumSize(QSize(120, 45))
         palette8 = QPalette()
         palette8.setBrush(QPalette.Active, QPalette.WindowText, brush10)
         palette8.setBrush(QPalette.Active, QPalette.Button, brush11)
@@ -671,25 +677,25 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.Calculate_btn)
 
 
-        self.verticalLayout_5.addLayout(self.horizontalLayout_6)
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
 
 
-        self.gridLayout_2.addLayout(self.verticalLayout_5, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
 
-        self.verticalLayout.addWidget(self.Scan_set_Box)
+        self.verticalLayout_2.addWidget(self.Scan_set_Box)
 
-        self.progressBar = QProgressBar(self.centralwidget)
+        self.progressBar = QProgressBar(self.widget)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setMinimumSize(QSize(200, 0))
         self.progressBar.setValue(0)
         self.progressBar.setTextVisible(True)
 
-        self.verticalLayout.addWidget(self.progressBar)
+        self.verticalLayout_2.addWidget(self.progressBar)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.Now_time = QLabel(self.centralwidget)
+        self.Now_time = QLabel(self.widget)
         self.Now_time.setObjectName(u"Now_time")
         sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
@@ -736,7 +742,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Now_time)
 
-        self.Done_time = QLabel(self.centralwidget)
+        self.Done_time = QLabel(self.widget)
         self.Done_time.setObjectName(u"Done_time")
         sizePolicy5.setHeightForWidth(self.Done_time.sizePolicy().hasHeightForWidth())
         self.Done_time.setSizePolicy(sizePolicy5)
@@ -778,7 +784,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.Done_time)
 
-        self.Cost_time = QLabel(self.centralwidget)
+        self.Cost_time = QLabel(self.widget)
         self.Cost_time.setObjectName(u"Cost_time")
         sizePolicy5.setHeightForWidth(self.Cost_time.sizePolicy().hasHeightForWidth())
         self.Cost_time.setSizePolicy(sizePolicy5)
@@ -821,15 +827,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.Cost_time)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
 
 
-        self.verticalLayout_3.addLayout(self.verticalLayout)
+        self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
-
-        self.gridLayout_3.addLayout(self.verticalLayout_3, 1, 0, 1, 1)
-
-        self.splitter = QSplitter(self.centralwidget)
+        self.splitter_2.addWidget(self.widget)
+        self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Vertical)
         self.Monitor_MDI = QMdiArea(self.splitter)
@@ -870,11 +874,12 @@ class Ui_MainWindow(object):
         self.info_textbox.setAcceptDrops(True)
         self.info_textbox.setReadOnly(True)
         self.splitter.addWidget(self.info_textbox)
+        self.splitter_2.addWidget(self.splitter)
 
-        self.gridLayout_3.addWidget(self.splitter, 1, 1, 1, 1)
+        self.verticalLayout_4.addWidget(self.splitter_2)
 
 
-        self.gridLayout_4.addLayout(self.gridLayout_3, 0, 0, 1, 1)
+        self.gridLayout_3.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)

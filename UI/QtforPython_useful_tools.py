@@ -72,6 +72,10 @@ class EmittingStr(QtCore.QObject):
 
     def write(self, text):
         self.textWritten.emit('>' + str(text))
+    
+    def flush(self):
+        pass
+
 
 
 # my custom msg box to show info with close event
@@ -80,10 +84,15 @@ class MyMsgBox(QDialog, Ui_Dialog):
     
     show a message box contain info and detailed info
     
-    :signal:
-        choose to send signal <str> when msg_box close-event <YES> or canceled <Cancel>
+    Note on signal:
+        choose to send signal <str> when msg_box close-event is accepted <YES> or canceled <Cancel>
+
         1 is send signal,0 is do not send 
-    close
+
+    close event send info:
+        1. Confirmed will send "Yes"
+        2. Cenceled will send "Cancel"
+
     
     Args:
         title: str= 
@@ -101,6 +110,7 @@ class MyMsgBox(QDialog, Ui_Dialog):
         self.text = text
         self.details = details
         self.setWindowTitle(title)
+        self.setWindowIcon(QApplication.style().standardIcon(QStyle.SP_MessageBoxInformation))
         self.Detail_text.setText(details)
         self.Info_box.setText(text)
         # hide the details when initialized
@@ -152,12 +162,11 @@ class AboutInfo(QWidget,Ui_Form):
         super(AboutInfo,self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("About the Program")
-        style = QApplication.style()
-        self.setWindowIcon(style.standardIcon(QStyle.SP_DesktopIcon))
+        self.setWindowIcon(QApplication.style().standardIcon(QStyle.SP_DesktopIcon))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = MyMsgBox('error','info',details='test test')
+    window = MyMsgBox('test','info',details='test test')
     window.show()
     app.exec()
 

@@ -30,7 +30,8 @@ from resource.Tools_functions import (createPath, deco_count_time,
                                        log_exceptions, my_logger, to_log)
 # import YAML load funcs
 from Architect.YAML_Read_load import read_yaml_data
-
+# import PV set QThread
+from Architect.PVsetMoveControl import PVsetThread
 # import data view plot UI
 from UI.Data_View_Plot import DataViewPlot
 # import scan range UI
@@ -88,7 +89,7 @@ class DATAChannel(object):
         self.__name=name
         self.__address=address
         self.__device=device
-        self.data=[0]
+        self.data=[-1]
 
     @property
     def name(self):
@@ -319,6 +320,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.set_endstation(0)
         self.Scan_Channel_cbx.currentIndexChanged['int'].connect(self.set_scan_X)
         self.set_scan_X(0)
+        # flag for monitoring on
+        self.channel_monitor_on_flag=False
 
     @log_exceptions(log_func=logger.error)
     @Slot(int)
@@ -367,8 +370,14 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.Full_DataChannnels={}
         self.set_channels()
         print(self.Full_DataChannnels)
-        for ch_name,daq_ch in self.Full_DataChannnels.items():
-            self.add_channel_monitor(daq_ch)
+        try:
+            for ch_name,daq_ch in self.Full_DataChannnels.items():
+                self.add_channel_monitor(daq_ch)
+        except Exception as e:
+            print(e)
+            logger.error(traceback.format_exc() + str(e))
+        else:
+            self.channel_monitor_on_flag=True
     
     def set_channels(self):
         # ADC channels
@@ -400,6 +409,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.All_monitors_dict[daq_ch.name].show()
             self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
+            #start the monitor
+            self.All_monitors_dict[daq_ch.name].start_monitor()
     
     @Slot(str,float)
     def get_channel_data(self,ch_name:str,value:float):
@@ -430,10 +441,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.scan_PVmovn=self.scanX_channel_dict[scanX_name].get('MOVN',None)
         print(f'Now scan:{scanX_name} PV={self.scan_PVset} with readback: PV={self.scan_PVrbv} '
         f'and movn: {self.scan_PVmovn}')
-        # add PV widget for monitoring
-        
-
-    
+        # set range flag before further scan
+        self.scan_range_set_flag=0
     
     """
     end of data channel selection part
@@ -441,13 +450,14 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
-    start of Scan  part
+    start of Scan set  part
     """
     def __ini_scan_set(self):
         #for PV monitor
 
         self.pvmonitors_dict={}
         self.pvmonitors_count=0
+        self.scan_range_set_flag=0
 
     @Slot()
     def on_Set_range_btn_clicked(self):
@@ -474,7 +484,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self._scan_info = scan_range_list
             self.raise_info(f'Next will scan {scan_range_list[0]}, scan range:\n{scan_range_list[-1]},'
                             f' total points: {len(scan_range_list[-1])}, you can start now')
-            self._scan_range_set_flag = 1
+            self.scan_range_set_flag = 1
             #print(self._scan_info)
             min_value=scan_range_list[-1][0]
             max_value=scan_range_list[-1][-1]
@@ -483,8 +493,6 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.Max_input.setText(f'{max_value}')
             self.Num_input.setText(f'{num}')
             logger.info(f'get scan info: {self._scan_info}')
-
-
 
     def Add_pv_monitor(self,pvname,tag=None):
         print(f'get pvname: {pvname}')
@@ -508,7 +516,31 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.pvmonitors_dict.pop(pvname,0)
         self.pvmonitors_count-=1
 
-        
+    @log_exceptions(log_func=logger.error)
+    @Slot()
+    def on_Start_scan_btn_clicked(self):
+        """
+        start the scan process
+        """
+        # check all status (channel set,range set) are OK
+        if self.scan_range_set_flag==1 and self.channel_monitor_on_flag:
+            scanX_name=self.Scan_Channel_cbx.currentText()
+            detailed_info = f'Scan set: will scan {scanX_name}\n Current value: {self.pv_current_value}\n' \
+                                f'Scan range: from {self.Min_input.text()} to {self.Max_input.text()}ms with totally {self.Num_input.text()} points\n' \
+                                f'You should confirm to start scan process.'
+            logger.info(detailed_info)
+            self.msg_box = MyMsgBox('Channel Scan', f'Scan on {scanX_name}', details=detailed_info, signal=1)
+            self.msg_box.close_sig.connect(self.pv_channel_scan)
+            self.msg_box.exec()
+
+    @log_exceptions(log_func=logger.error)
+    @Slot(str)
+    def pv_channel_scan(self, start_info: str):
+        if start_info=='Yes':
+            print(f'Now begin scan on{self._scan_info[0]} ')
+            self._scan_info
+
+
 
     """
     end of Scan  part

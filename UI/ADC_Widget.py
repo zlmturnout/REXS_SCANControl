@@ -214,6 +214,9 @@ class ADCMonitor(QWidget,Ui_Form):
     def on_Start_monitor_btn_clicked(self):
         """start adc monitor
         """
+        self.start_monitor()
+        
+    def start_monitor(self):
         if not self.monitor_on_flag:
             print(self.ul_range_num)
             self.start_time=time.time()
@@ -247,7 +250,7 @@ class ADCMonitor(QWidget,Ui_Form):
         Args:
             data_list (list): Form:[[x1,x2,x3,x4],x]=[all_read, average_value]
         """
-        self.monitor_on_flag=True if not self.monitor_on_flag else False
+        self.monitor_on_flag=True 
         if isinstance(read_list[-1],float):
             new_value=read_list[-1]
             t_elapse=time.time()-self.start_time
@@ -302,7 +305,7 @@ class ADCMonitor(QWidget,Ui_Form):
          self.datasave_num+=1
          all_valid_data = self.get_full_data()
          cur_datetime=time.strftime("%Y-%m-%d-%H-%M", time.localtime())
-         save_header=self.pvname.replace(":","_")
+         save_header=self.adc_name.replace(":","_")
          filename=f'{save_header}-{cur_datetime}N{self.datasave_num}'
          today_folder=createPath(os.path.join(save_path,time.strftime('%Y-%m-%d', time.localtime())))
          self.save_all_data(all_valid_data,today_folder,filename)
