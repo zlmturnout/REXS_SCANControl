@@ -42,9 +42,8 @@ def dict_to_excel(data_dict: dict, path, filename):
     # change to the data from to standard dict {'key': pd.Series([list],index=[index])}
     pd_data = dict_to_DataFrame(data_dict)
     # excel writer
-    excel_writer = pd.ExcelWriter(file_in_path)
-    pd_data.to_excel(excel_writer)
-    excel_writer.save()
+    with pd.ExcelWriter(file_in_path) as writer:
+        pd_data.to_excel(writer)
     print('save to excel xlsx file successfully')
 
 

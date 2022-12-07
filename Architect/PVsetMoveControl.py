@@ -28,20 +28,33 @@ class PVsetThread(QThread):
     self.PVsetQThread.done_signal.connect(self.PV_set_done)
     self.PVsetQThread.start()
     ```
-
-
     """
     done_signal = Signal(list)
 
     def __init__(self, set_pv, set_value, rbv_pv, movn_pv, check_num: int = 0,resolution=0.02, parent=None):
         """
-        need pv name of [set,rbv,mvn] and the set value,num for check usage
+        ## introduction
+
+        Working QThread for setting the value of one PV (mostly involves motor movement)
+        
+        emit done signal when set position is finished successfully.
+        
+        emit signal form: list[read_back,set_value,check_n,set_info]
+        
+        ## Usage 
+        example code:
+        ```python
+        self.PVsetQThread = PVmotorThread(PV_SET, set_value, PV_RBV, PV_Motor_MOVN, check_num=0, resolution=0.02)
+        self.PVsetQThread.done_signal.connect(self.PV_set_done)
+        self.PVsetQThread.start()
+        ```
+        need pv name of [set,rbv,mvn] and the set value,check_num for check usage
         :param set_pv:
         :param set_value:
         :param rbv_pv:
         :param mov_pv:
-        :param num:
-        :param parent:
+        :param check_num:
+        :param resolution: resolution for PV value set,default 0.02 
         """
         super(PVsetThread, self).__init__(parent)
         self._set_pv = PV(set_pv)

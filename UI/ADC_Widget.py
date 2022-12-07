@@ -253,6 +253,7 @@ class ADCMonitor(QWidget,Ui_Form):
         self.monitor_on_flag=True 
         if isinstance(read_list[-1],float):
             new_value=read_list[-1]
+            self.lcdNumber.display(new_value)
             t_elapse=time.time()-self.start_time
             self.data_list.append(new_value)
             self.time_list.append(t_elapse)

@@ -140,6 +140,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self._ini_menu()
         self.__ini_DAQ()
         self.__ini_scan_set()
+        self.__ini_plot()
 
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
@@ -312,14 +313,12 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.Full_DataChannnels=dict()
         self.adc_channels={"TEY_V":self.ADC_TEY_checkBox,"Au_V":self.ADC_Au_checkBox,"PD_V":self.ADC_PD_checkBox}
         self.pA_channels={"TEY_I":self.pA_TEY_checkBox,"Au_I":self.pA_Au_checkBox,"PD_I":self.pA_PD_checkBox}
-        self.active_data_dict={}
+        self.active_data_dict={} # all channel data will store in the active data dict
         #for adc monitors
         self.All_monitors_dict={}
         self.All_monitor_count=0
         self.Select_endstation_cbx.currentIndexChanged['int'].connect(self.set_endstation)
         self.set_endstation(0)
-        self.Scan_Channel_cbx.currentIndexChanged['int'].connect(self.set_scan_X)
-        self.set_scan_X(0)
         # flag for monitoring on
         self.channel_monitor_on_flag=False
 
@@ -367,17 +366,18 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     def on_Start_Acqusition_btn_clicked(self):
         """check data channel and start acquiring data
         """
-        self.Full_DataChannnels={}
-        self.set_channels()
-        print(self.Full_DataChannnels)
-        try:
-            for ch_name,daq_ch in self.Full_DataChannnels.items():
-                self.add_channel_monitor(daq_ch)
-        except Exception as e:
-            print(e)
-            logger.error(traceback.format_exc() + str(e))
-        else:
-            self.channel_monitor_on_flag=True
+        if not self.channel_monitor_on_flag:
+            try:
+                self.Full_DataChannnels={}
+                self.set_channels()
+                print(self.Full_DataChannnels)
+                for ch_name,daq_ch in self.Full_DataChannnels.items():
+                    self.add_channel_monitor(daq_ch)
+            except Exception as e:
+                print(e)
+                logger.error(traceback.format_exc() + str(e))
+            else:
+                self.channel_monitor_on_flag=True
     
     def set_channels(self):
         # ADC channels
@@ -430,48 +430,87 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.All_monitors_dict.pop(ch_name,0)
         self.All_monitor_count-=1
 
-    @log_exceptions(log_func=logger.error)
-    @Slot(int)
-    def set_scan_X(self,index:int):
-        """set the PV name for scan X axis
-        """
-        scanX_name=self.Scan_Channel_cbx.currentText()
-        self.scan_PVset=self.scanX_channel_dict[scanX_name]["SET"]
-        self.scan_PVrbv=self.scanX_channel_dict[scanX_name]["RBV"]
-        self.scan_PVmovn=self.scanX_channel_dict[scanX_name].get('MOVN',None)
-        print(f'Now scan:{scanX_name} PV={self.scan_PVset} with readback: PV={self.scan_PVrbv} '
-        f'and movn: {self.scan_PVmovn}')
-        # set range flag before further scan
-        self.scan_range_set_flag=0
     
     """
     end of data channel selection part
     """   
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
-    start of Scan set  part
+    start of Scan range set part
     """
     def __ini_scan_set(self):
         #for PV monitor
-
         self.pvmonitors_dict={}
         self.pvmonitors_count=0
+        self.scan_range_set_flag=0
+        # scan data 
+        self.total_scan_num=0
+        self.curr_scan_num=0
+        self.scan_X_set_list=[]
+        self.scan_X_data_set=[]
+        self.scan_X_data_rbv=[]
+        self.scan_timestamp_list=[]
+        self.scan_started_flag=False
+        self._save_N=0
+        # timer for scan process
+        self.scan_start_time = time.time()
+        self.scan_cost_timer = QTimer()
+        self.scan_cost_timer.timeout.connect(self.update_cost_time)
+        # set scan X type
+        self.Scan_Channel_cbx.currentIndexChanged['int'].connect(self.set_scan_X)
+        self.set_scan_X(0)
+
+    @staticmethod
+    def expect_time_cost(scan_mode:str,scan_num: int, t_interval: int):
+        """
+        calculate the expected time cost of this scan
+        :param scan_mode: 'ADC' or 'pAmeter'
+        :param scan_num: total scan numbers
+        :param t_interval: set dt/ms
+        :return: time cost by seconds
+        """
+        if scan_mode == 'ADC':
+            return float(scan_num * (t_interval / 1000 + 1.5))
+        elif scan_mode == 'pAmeter':
+            return float(scan_num * (t_interval / 1000 + 1.0))
+        else:
+            return float(scan_num * (t_interval / 1000 + 2.0))
+
+    @Slot()
+    def update_cost_time(self):
+        time_past = time.time() - self.scan_start_time
+        self.Cost_time.setText('Time Cost :' + str(datetime.timedelta(seconds=time_past)))
+
+    @log_exceptions(log_func=logger.error)
+    @Slot(int)
+    def set_scan_X(self,index:int):
+        """set the PV name for scan X axis
+        """
+        self.scanX_name=self.Scan_Channel_cbx.currentText()
+        self.scan_PVset=self.scanX_channel_dict[self.scanX_name]["SET"]
+        self.scan_PVrbv=self.scanX_channel_dict[self.scanX_name]["RBV"]
+        self.scan_PVmovn=self.scanX_channel_dict[self.scanX_name].get('MOVN',None)
+        scan_msg=f'Now will scan:{self.scanX_name} PV={self.scan_PVset} with readback: PV={self.scan_PVrbv} '
+        f'and movn: {self.scan_PVmovn}'
+        print(scan_msg)
+        logger.info(scan_msg)
+        # set range flag before further scan
         self.scan_range_set_flag=0
 
     @Slot()
     def on_Set_range_btn_clicked(self):
         """set scan range
         """
-        scanX_name=self.Scan_Channel_cbx.currentText()
         self.pv_current_value=self.Add_pv_monitor(pvname=self.scan_PVrbv,tag="SCAN X axis")
         if self.pv_current_value:
-            input_info = f'scan channel: {scanX_name}\nCurrent value:\n{scanX_name}:{self.pv_current_value}'
-            self.inputRange_dialog = InputScanRange(f'{scanX_name}', input_info)
+            input_info = f'scan channel: {self.scanX_name}\nCurrent value:\n{self.scanX_name}:{self.pv_current_value}'
+            self.inputRange_dialog = InputScanRange(f'{self.scanX_name}', input_info)
             self.inputRange_dialog.data_sig.connect(self.get_scan_range)
             self.inputRange_dialog.show()
         else:
-            self.raise_warning(f'access to {scanX_name} failed with None value get')
+            self.raise_warning(f'access to {self.scanX_name} failed with None value get')
 
     @Slot(list)
     def get_scan_range(self, scan_range_list: list):
@@ -516,34 +555,280 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.pvmonitors_dict.pop(pvname,0)
         self.pvmonitors_count-=1
 
+    """
+    end of the scan range set part
+    """
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    
+
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    start of the scan process part
+    """
+
     @log_exceptions(log_func=logger.error)
     @Slot()
     def on_Start_scan_btn_clicked(self):
         """
-        start the scan process
+        start the scan run process
+        # main process:
+        1. set X PV
+        2. acquire channel data
+        3. plot the X-ch data
+        4. check should start next round[1,2,3] again
+        5. end scan process and save data
+
         """
         # check all status (channel set,range set) are OK
-        if self.scan_range_set_flag==1 and self.channel_monitor_on_flag:
-            scanX_name=self.Scan_Channel_cbx.currentText()
-            detailed_info = f'Scan set: will scan {scanX_name}\n Current value: {self.pv_current_value}\n' \
+        if self.scan_range_set_flag==1 and self.channel_monitor_on_flag and not self.scan_started_flag:
+            detailed_info = f'Scan set: will scan {self.scanX_name}\n Current value: {self.pv_current_value}\n' \
                                 f'Scan range: from {self.Min_input.text()} to {self.Max_input.text()}ms with totally {self.Num_input.text()} points\n' \
                                 f'You should confirm to start scan process.'
             logger.info(detailed_info)
-            self.msg_box = MyMsgBox('Channel Scan', f'Scan on {scanX_name}', details=detailed_info, signal=1)
+            # clean the active_data_dict
+            for ch,ch_datalist in self.active_data_dict.items():
+                ch_datalist=[]
+            self.msg_box = MyMsgBox('Channel Scan', f'Scan on {self.scanX_name}', details=detailed_info, signal=1)
             self.msg_box.close_sig.connect(self.pv_channel_scan)
             self.msg_box.exec()
 
     @log_exceptions(log_func=logger.error)
     @Slot(str)
     def pv_channel_scan(self, start_info: str):
+        """PV channel scan start
+        Note on scan_info=[scanX_name,[set_value_list]]
+        
+        Args:
+            start_info (str): Yes|Cancel
+        
+        """
         if start_info=='Yes':
             print(f'Now begin scan on{self._scan_info[0]} ')
-            self._scan_info
+            self.scan_X_set_list=self._scan_info[1]
+            self.total_scan_num=len(self.scan_X_set_list)
+            # start emit signal for PV sets
+            self.scan_start_sig.connect(self.set_X_PV)
+            self.scan_start_sig.emit([self.cur_scan_num,"Set_X"])
+            logger.info(f'begin set PV value')
+            # calculate time cost
+            time_cost = self.expect_time_cost(scan_mode='ADC',scan_num=len(self.scan_X_set_list), t_interval=500)
+            t_done = time.time() + time_cost
+            tdone_stamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t_done))
+            self.Done_time.setText(f'Finish at:{tdone_stamp}')
+            self.scan_start_time = time.time()
+            self.scan_cost_timer.start(1000)
+        elif start_info == 'Cancel':
+            pass
+    
+    @Slot(list)
+    def set_X_PV(self,Xset_info:list):
+        """
+        set the PV value of X scan
+        Args:
+            Xset_info (list): [cur_scan_num,"Set_X"]
+        """
+        if Xset_info[-1]=="Set_X":
+            self.scan_started_flag=True
+            X_setValue=self.scan_X_set_list[Xset_info[0]]
+            self.XsetThread=PVsetThread(set_pv=self.scan_PVset,set_value=X_setValue,rbv_pv=self.scan_PVrbv,
+                                            movn_pv=self.scan_PVmovn,check_num=0,resolution=0.2)
+            self.XsetThread.done_signal.connect(self.Xset_done)
+            self.XsetThread.start()
+    
+    @Slot(list)
+    def Xset_done(self,done_info:list):
+        """X PV value set done,append data and acquire data from all active channels
+
+        Args:
+            done_info (list): [read_back,set_value,check_n,set_info]
+        """
+        print(done_info)
+        if done_info[-1]=="done" or 'done with time out':
+            # set X done
+            self.scan_X_data_rbv.append(done_info[0])
+            self.scan_X_data_set.append(done_info[1])
+            logger.info(f'{self.scanX_name} set done: {done_info}')
+            # start channel data acquire from active_data_dict
+            try:
+                for ch_name,ch_data_list in self.active_data_dict.items():
+                    if isinstance(ch_data_list,list):
+                        # add latest data from DATAChannel of this ch_name to active_data_dict 
+                        ch_data_list.append(self.Full_DataChannnels[ch_name].data[-1])
+            except Exception as e:
+                print(e)
+                logger.error(traceback.format_exc() + str(e))
+            else:
+                # now start new run
+                self.ch_dataAcquire_done()
+
+    def ch_dataAcquire_done(self):
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.scan_timestamp_list.append(timestamp)
+        # plot the all scan channel data acording to plot set 
+        full_X_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
+                            "timestamp":self.scan_timestamp_list}
+        self.plot_scan_data(x_data=full_X_data, y_data=self.active_data_dict)
+            
+        # check if should start next scan round again
+        self.curr_scan_num += 1
+        if self.curr_scan_num<self.total_scan_num:
+            # start next scan round
+            self.scan_start_sig.emit([self.curr_scan_num,"Set_X"])
+            self.set_progress_Bar(int(100*self.curr_scan_num/self.total_scan_num))
+        elif self.curr_scan_num==self.total_scan_num:
+            # scan done
+            self.set_progress_Bar(100)
+            done_msg=f'{self.scanX_name} scan process done'
+            print(done_msg)
+            logger.info(done_msg)
+            self.scan_cost_timer.stop()
+            self.scan_start_sig.disconnect(self.set_X_PV)
+            self.scan_started_flag=False
+            # save all scan data automatically
+            full_data=self.get_full_data()
+            t_stamp = time.strftime('%Y-%m-%d-%H-%M', time.localtime())
+            self._save_N += 1
+            filename = f'GR_counts_data_{t_stamp}_{self._save_N}'
+            folder = time.strftime('%Y-%m-%d', time.localtime())
+            save_folder = createPath(os.path.join(save_path, folder))
+            self.save_scan_data(full_data, save_folder, filename)
+            # show on msg box
+            time_cost=time.time()-self.scan_start_time
+            done_info=f'scan {self.scanX_name} finished successfully!\n Total scan num:{self.curr_scan_num}\n\
+                        Time cost:{time_cost:.2f}~{str(datetime.timedelta(seconds=time_cost))}\n\
+                        save to path:{save_path}'
+            self.done_msgbox=MyMsgBox('Channel Scan done', f'Scan on {self.scanX_name} finished', details=done_info, signal=0)
+            self.done_msgbox.show()
+
+
+    """
+    end of the scan process part
+    """
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+
+
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    plot and save scan data
+    """
+    def __ini_plot(self):
+        self.figure = Myplot()
+        # add NavigationToolbar in the figure (widgets)
+        self.fig_ntb = NavigationToolbar(self.figure, self)
+        # add the figure into the Plot box
+        self.gridlayout = QGridLayout(self.Main_fig_box)
+        self.gridlayout.addWidget(self.figure)
+        self.gridlayout.addWidget(self.fig_ntb)
+
+    def plot_scan_data(self, x_list: list, y_list: list, x_name: str, y_name: str):
+        """
+        plot any x_list and y_list data,and set the Axis name x_name,y_name
+        :param x_list:
+        :param y_list:
+        :param x_name:
+        :param y_name:
+        :return:
+        """
+        # plot
+        self.figure.axes.cla()
+        self.figure.axes.plot(x_list, y_list, marker='o', markersize=4, markerfacecolor='orchid',
+                              markeredgecolor='orchid', linestyle='-', color='c')
+        self.figure.axes.set_xlabel(x_name, fontsize=16, color='m')
+        self.figure.axes.set_ylabel(y_name, fontsize=16, color='m')
+        self.figure.draw()
+
+    def get_full_data(self):
+        """
+        get the full scan data and return
+        data structure:
+        full_data_dict={"name":[datalist]}
+
+        :return: full valid scan data(not empty) in dict form
+        """
+        valid_full_data = dict()
+        active_full_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
+                            "timestamp":self.scan_timestamp_list}
+        #add channel data
+        active_full_data.update(self.active_data_dict)
+        # get the valid scan data (not empty)
+        for key, value in active_full_data.items():
+            if value:
+                valid_full_data[key] = value
+        return valid_full_data
+
+    # clear all scan data
+    def clear_all_data(self):
+        """
+        clear all previous data
+        :return:
+        """
+        self.scan_X_data_set=[]
+        self.scan_X_data_rbv=[]
+        self.scan_timestamp_list=[]
+        for ch_name,ch_data in self.active_data_dict.items():
+            print(f'clear all data in {ch_name}')
+            self.active_data_dict[ch_name]=[]
+        
+
+    # save scan data
+    def save_scan_data(self, full_data: dict, path, filename):
+        """
+        save the full data into several file form [dict] form
+        :param filename: filename without extension
+        :param path: filepath
+        :param full_data: {'counts':[list],'Energy':[list]....}
+        :return:
+        """
+        if full_data and os.path.isdir(path):
+            dict_to_csv(full_data, path, filename + '.csv')
+            dict_to_excel(full_data, path, filename + '.xlsx')
+            # dict_to_json(full_data, path, filename + '.json')
+            dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'ALLScanData.db')
+            QMessageBox.information(self, 'save file', f'full data have been saved to {path}', QMessageBox.Yes)
+
+    def usr_save_full_data(self, full_data: dict, path: str, usrname='usr_test', usr_define: int = 1):
+        """
+        check all the data acquired now,save all valid data
+        :param usrname: usr defined filename
+        :param path: filepath
+        :param filename: filename without extension
+        :param usr_define: usr define save path and filename->1=yes,0=no
+        :return:
+        """
+        t_stamp = time.strftime('%Y-%m-%d-%H-%M', time.localtime())
+        self._save_N += 1
+        filename = usrname + t_stamp + str(self._save_N)
+        usr_path = path if os.path.isdir(path) else save_path
+        print(filename, usr_path)
+        file_in_path = None
+        filetype = None
+        # save scan data
+        if full_data:
+            if usr_define == 1:
+                file_in_path, filetype = QFileDialog.getSaveFileName(self, 'save file', usr_path, 'xlsx(*.xlsx)')
+                usr_path = os.path.dirname(file_in_path)
+                usr_file = os.path.basename(file_in_path)
+                filename = usr_file.split('.')[0]
+            self.save_scan_data(full_data, usr_path, filename)
+        else:
+            if usr_define == 1:
+                self.raise_info(f'No data to save')
+            else:
+                pass
+
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+
+
+
+            
+
+
+
 
 
 
     """
-    end of Scan  part
+    end of Scan process part
     """   
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
 

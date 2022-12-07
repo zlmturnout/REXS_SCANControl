@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_ADC_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,15 +15,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QGroupBox,
-    QHBoxLayout, QLabel, QPushButton, QSizePolicy,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
+    QGroupBox, QHBoxLayout, QLCDNumber, QLabel,
+    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(300, 230)
+        Form.resize(300, 239)
         Form.setMinimumSize(QSize(300, 230))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -69,7 +69,7 @@ class Ui_Form(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.Device_label.sizePolicy().hasHeightForWidth())
         self.Device_label.setSizePolicy(sizePolicy1)
-        self.Device_label.setMinimumSize(QSize(200, 20))
+        self.Device_label.setMinimumSize(QSize(120, 20))
         self.Device_label.setMaximumSize(QSize(3160, 40))
         palette = QPalette()
         brush = QBrush(QColor(255, 85, 0, 255))
@@ -112,6 +112,33 @@ class Ui_Form(object):
 
         self.horizontalLayout_3.addWidget(self.Device_label)
 
+        self.lcdNumber = QLCDNumber(Form)
+        self.lcdNumber.setObjectName(u"lcdNumber")
+        self.lcdNumber.setMinimumSize(QSize(100, 40))
+        self.lcdNumber.setMaximumSize(QSize(16777215, 40))
+        palette1 = QPalette()
+        palette1.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        brush6 = QBrush(QColor(66, 223, 255, 255))
+        brush6.setStyle(Qt.SolidPattern)
+        palette1.setBrush(QPalette.Active, QPalette.Text, brush6)
+        brush7 = QBrush(QColor(255, 85, 127, 255))
+        brush7.setStyle(Qt.SolidPattern)
+        palette1.setBrush(QPalette.Active, QPalette.ButtonText, brush7)
+        palette1.setBrush(QPalette.Inactive, QPalette.WindowText, brush2)
+        palette1.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette1.setBrush(QPalette.Inactive, QPalette.ButtonText, brush2)
+        palette1.setBrush(QPalette.Disabled, QPalette.WindowText, brush4)
+        palette1.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        palette1.setBrush(QPalette.Disabled, QPalette.ButtonText, brush4)
+        self.lcdNumber.setPalette(palette1)
+        self.lcdNumber.setFrameShadow(QFrame.Plain)
+        self.lcdNumber.setSmallDecimalPoint(True)
+        self.lcdNumber.setDigitCount(5)
+        self.lcdNumber.setMode(QLCDNumber.Dec)
+        self.lcdNumber.setProperty("value", 0.000000000000000)
+
+        self.horizontalLayout_3.addWidget(self.lcdNumber)
+
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
@@ -131,13 +158,13 @@ class Ui_Form(object):
         self.Channel_cbx.setObjectName(u"Channel_cbx")
         self.Channel_cbx.setMinimumSize(QSize(120, 40))
         self.Channel_cbx.setMaximumSize(QSize(120, 40))
-        palette1 = QPalette()
-        brush6 = QBrush(QColor(0, 170, 255, 255))
-        brush6.setStyle(Qt.SolidPattern)
-        palette1.setBrush(QPalette.Active, QPalette.Text, brush6)
-        palette1.setBrush(QPalette.Inactive, QPalette.Text, brush2)
-        palette1.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        self.Channel_cbx.setPalette(palette1)
+        palette2 = QPalette()
+        brush8 = QBrush(QColor(0, 170, 255, 255))
+        brush8.setStyle(Qt.SolidPattern)
+        palette2.setBrush(QPalette.Active, QPalette.Text, brush8)
+        palette2.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette2.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        self.Channel_cbx.setPalette(palette2)
         font2 = QFont()
         font2.setFamilies([u"Arial"])
         font2.setPointSize(16)
@@ -155,11 +182,11 @@ class Ui_Form(object):
         self.Range_cbx.setObjectName(u"Range_cbx")
         self.Range_cbx.setMinimumSize(QSize(120, 40))
         self.Range_cbx.setMaximumSize(QSize(120, 40))
-        palette2 = QPalette()
-        palette2.setBrush(QPalette.Active, QPalette.Text, brush6)
-        palette2.setBrush(QPalette.Inactive, QPalette.Text, brush2)
-        palette2.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        self.Range_cbx.setPalette(palette2)
+        palette3 = QPalette()
+        palette3.setBrush(QPalette.Active, QPalette.Text, brush8)
+        palette3.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette3.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        self.Range_cbx.setPalette(palette3)
         self.Range_cbx.setFont(font1)
         self.Range_cbx.setToolTipDuration(5000)
         self.Range_cbx.setEditable(False)
