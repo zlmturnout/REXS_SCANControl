@@ -2448,6 +2448,26 @@ background-color: rgb(180, 249, 255);</string>
                   <string notr="true">color: rgb(255, 85, 0);
 background-color: rgb(180, 249, 255);</string>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>TEY</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TEY/Au</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Au</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PD</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>

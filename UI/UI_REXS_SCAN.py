@@ -588,6 +588,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.label_5)
 
         self.Y_axis_set_cbx = QComboBox(self.groupBox)
+        self.Y_axis_set_cbx.addItem("")
+        self.Y_axis_set_cbx.addItem("")
+        self.Y_axis_set_cbx.addItem("")
+        self.Y_axis_set_cbx.addItem("")
         self.Y_axis_set_cbx.setObjectName(u"Y_axis_set_cbx")
         self.Y_axis_set_cbx.setMinimumSize(QSize(100, 30))
         self.Y_axis_set_cbx.setMaximumSize(QSize(220, 16777215))
@@ -1296,6 +1300,11 @@ class Ui_MainWindow(object):
         self.X_axis_set_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"Timestamp", None))
 
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Y axis:", None))
+        self.Y_axis_set_cbx.setItemText(0, QCoreApplication.translate("MainWindow", u"TEY", None))
+        self.Y_axis_set_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"TEY/Au", None))
+        self.Y_axis_set_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"Au", None))
+        self.Y_axis_set_cbx.setItemText(3, QCoreApplication.translate("MainWindow", u"PD", None))
+
         self.Scan_set_Box.setTitle(QCoreApplication.translate("MainWindow", u"Scan_Set", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"From", None))
         self.Max_input.setInputMask("")
