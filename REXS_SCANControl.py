@@ -31,7 +31,7 @@ from resource.Tools_functions import (createPath, deco_count_time,
 # import YAML load funcs
 from Architect.YAML_Read_load import read_yaml_data
 # import PV set QThread
-from Architect.PVsetMoveControl import PVsetThread
+from Architect.PVsetMoveControl import PVsetThread,SSRFBeamLine
 # import data view plot UI
 from UI.Data_View_Plot import DataViewPlot
 # import scan range UI
@@ -141,6 +141,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.__ini_DAQ()
         self.__ini_scan_set()
         self.__ini_plot()
+        self.__ini_beamline()
 
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
@@ -299,6 +300,21 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     """
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
 
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    """
+    start of operator and beamline info part
+    """
+    def __ini_beamline(self):
+        self.SSRF_timer=QTimer()
+        self.SSRF_timer_runFlag=False
+        self.SSRF_timer.timeout.connect(self.get_SSRF_BeamStatus)
+        self.SSRF_beamline=SSRFBeamLine()
+        self.SSRF_timer.start(1000)
+    
+    def get_SSRF_BeamStatus(self):
+        beam_current=self.SSRF_beamline.beamcurrent
+        self.BeamCurrent_lcd.display(beam_current)    
+    
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
     start of data channel selection part

@@ -1,7 +1,7 @@
 from PySide6.QtCore import QTimer, Slot, QThread, Signal, QObject
 from epics import ca, caget, cainfo, camonitor, caput, PV, camonitor_clear, get_pv
 import time, random
-import sys, os
+import sys, os,traceback
 
 
 """
@@ -155,3 +155,28 @@ class PVsetThread(QThread):
         if value:
             # print(f'Motor status: {value}')
             self._motor_mvn_flag = value
+
+SSRF_BeamcurentPV="SR-Bl:DCCT:CURRENT"
+class SSRFBeamLine(object):
+    
+    def __init__(self) -> None:
+        super(SSRFBeamLine, self).__init__()
+        self.BeamCurrent_pv = PV(SSRF_BeamcurentPV, callback=self.SSRFCurrent_rbv)
+        self.__beamcurrent=0
+        
+    def SSRFCurrent_rbv(self, pvname, value, **kwargs):
+        """
+        read back value
+        :return:
+        """
+        if isinstance(value,float):
+            # print(f'read back: {value}')
+            self.__beamcurrent=value
+    
+    @property
+    def beamcurrent(self):
+        return self.__beamcurrent
+    
+    @beamcurrent.setter
+    def beamcurrent(self,current:float):
+        self.__beamcurrent=current
