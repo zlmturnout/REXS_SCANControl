@@ -309,11 +309,14 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.SSRF_timer_runFlag=False
         self.SSRF_timer.timeout.connect(self.get_SSRF_BeamStatus)
         self.SSRF_beamline=SSRFBeamLine()
-        self.SSRF_timer.start(1000)
+        self.SSRF_timer.start(2000)
     
     def get_SSRF_BeamStatus(self):
         beam_current=self.SSRF_beamline.beamcurrent
-        self.BeamCurrent_lcd.display(beam_current)    
+        self.BeamCurrent_lcd.display(beam_current)
+        if "TEY_V" in self.Full_DataChannnels:
+            pass
+            #print(f'get TEY_V: {self.Full_DataChannnels["TEY_V"].data[-1]} V')    
     
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
@@ -426,11 +429,11 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
             #start the monitor
-            self.All_monitors_dict[daq_ch.name].start_monitor()
+            #self.All_monitors_dict[daq_ch.name].start_monitor()
     
     @Slot(str,float)
     def get_channel_data(self,ch_name:str,value:float):
-        print(f'channel: {ch_name} get a new value: {value}')
+        #print(f'channel: {ch_name} get a new value: {value}')
         #update data list in DATAChannel with ch_name
         self.Full_DataChannnels[ch_name].add_data(value)
     

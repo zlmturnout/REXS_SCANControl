@@ -156,13 +156,13 @@ class PVsetThread(QThread):
             # print(f'Motor status: {value}')
             self._motor_mvn_flag = value
 
-SSRF_BeamcurentPV="SR-Bl:DCCT:CURRENT"
+SSRF_BeamcurentPV="SR-BI:DCCT:CURRENT"
 class SSRFBeamLine(object):
     
     def __init__(self) -> None:
         super(SSRFBeamLine, self).__init__()
         self.BeamCurrent_pv = PV(SSRF_BeamcurentPV, callback=self.SSRFCurrent_rbv)
-        self.__beamcurrent=0
+        self.__beamcurrent=self.BeamCurrent_pv.get() if self.BeamCurrent_pv.get() else -1
         
     def SSRFCurrent_rbv(self, pvname, value, **kwargs):
         """

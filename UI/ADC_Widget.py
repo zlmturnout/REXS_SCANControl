@@ -102,7 +102,7 @@ class E1608QThread(QThread):
                 # emit list form [[x,x,x,x,x],average]
                 all_read = read_value
                 self.data_sig.emit([all_read, average_value])
-                print(f'emit data info: {[all_read, average_value]}')
+                #print(f'emit data info: {[all_read, average_value]}')
                 self.msleep(100)
                 if self.keep_on == 0:
                     print('set run flag to False')
@@ -170,7 +170,7 @@ class ADCMonitor(QWidget,Ui_Form):
                                    markeredgecolor='orchid', linestyle='-', color='c')
         self.data_fig_ax.set_xlabel(x_name, fontsize=12, color='m')
         self.data_fig_ax.set_ylabel(y_name, fontsize=12, color='m')
-        self.data_fig_ax.set_title(self.tagname,color='#ff5500')
+        self.data_fig_ax.set_title(self.adc_name,color='#ff5500')
         self.data_fig_ax.figure.autofmt_xdate(rotation=25)
         self.data_fig_ax.figure.canvas.draw()
 
@@ -217,6 +217,10 @@ class ADCMonitor(QWidget,Ui_Form):
         self.start_monitor()
         
     def start_monitor(self):
+        #clear old data
+        self.data_list=[]
+        self.time_list=[]
+        self.timestamp_list=[]
         if not self.monitor_on_flag:
             print(self.ul_range_num)
             self.start_time=time.time()
@@ -241,8 +245,6 @@ class ADCMonitor(QWidget,Ui_Form):
             self.Details_btn.setText(">--<")
             self.hide_details_flag=True
 
-
-
     @Slot(list)
     def get_ReadValue(self,read_list:list):
         """_summary_
@@ -257,7 +259,8 @@ class ADCMonitor(QWidget,Ui_Form):
             t_elapse=time.time()-self.start_time
             self.data_list.append(new_value)
             self.time_list.append(t_elapse)
-            self.timestamp_list.append(get_datetime())
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            self.timestamp_list.append(timestamp)
             # decide wether emit data  or not
             if self.emit_data:
                 self.emit_data_sig.emit(self.adc_name,new_value)
@@ -275,6 +278,7 @@ class ADCMonitor(QWidget,Ui_Form):
 
     @Slot()
     def on_Stop_monitor_btn_clicked(self):
+        print(f'monitor status: {self.monitor_on_flag}')
         if self.monitor_on_flag:
             self.monitor_on_flag=False
             self._DaqQthread.__del__()
@@ -309,7 +313,8 @@ class ADCMonitor(QWidget,Ui_Form):
          save_header=self.adc_name.replace(":","_")
          filename=f'{save_header}-{cur_datetime}N{self.datasave_num}'
          today_folder=createPath(os.path.join(save_path,time.strftime('%Y-%m-%d', time.localtime())))
-         self.save_all_data(all_valid_data,today_folder,filename)
+         routine_folder=createPath(os.path.join(today_folder,"ADCMonitorData"))
+         self.save_all_data(all_valid_data,routine_folder,filename,filetype=('excel',"sqlite"))
         
     def get_full_data(self):
         """
@@ -324,19 +329,24 @@ class ADCMonitor(QWidget,Ui_Form):
         return valid_full_data
 
 
-    def save_all_data(self,full_data:dict,path,filename):
+    def save_all_data(self,full_data:dict,path,filename,filetype:tuple=("excel","csv","sqlite","json")):
         """save all sensor data
         save to excel xlsx,json,csv and sqlite database
         Args:
             full_data[dict]: full data in dict
             path: save path
             filename: filename
+            filetype:tuple(excel,csv,sqlite,json)
         """
         if full_data and os.path.isdir(path):
-            dict_to_csv(full_data, path, filename + '.csv')
-            dict_to_excel(full_data, path, filename + '.xlsx')
-            #dict_to_json(full_data, path, filename + '.json')
-            dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'PVMonitorData.db')
+            if "csv" in filetype:
+                dict_to_csv(full_data, path, filename + '.csv')
+            if "excel" in filetype:
+                dict_to_excel(full_data, path, filename + '.xlsx')
+            if "sqlite" in filetype:
+                dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'ADCMonitorData.db')
+            if "json" in filetype:
+                dict_to_json(full_data, path, filename + '.json')
             details=f'save to excel/csv/json files.\nFilename:{path+filename}\nSqlite database:{SQLiteDB_path}/SensorData.db\ntablename:{filename}'
             print(details)
             
@@ -375,11 +385,14 @@ class ADCMonitor(QWidget,Ui_Form):
     
     def closeEvent(self, event):
         if self.monitor_on_flag:
-            self.monitor_on_flag=False
-            self._DaqQthread.__del__()
-            self.close_sig.emit(self.adc_name)
+            
+            # self.monitor_on_flag=False
+            # self._DaqQthread.__del__()
+            # self.close_sig.emit(self.adc_name)
+            event.ignore()
             #event.accept()
         else:
+            event.accept()
             self.close_sig.emit(self.adc_name)
             
 
