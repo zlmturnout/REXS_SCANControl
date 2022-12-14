@@ -253,7 +253,7 @@ class Ui_MainWindow(object):
         self.ADC_Au_checkBox.setCheckable(True)
         self.ADC_Au_checkBox.setChecked(True)
         self.ADC_Au_checkBox.setAutoRepeat(False)
-        self.ADC_Au_checkBox.setTristate(True)
+        self.ADC_Au_checkBox.setTristate(False)
 
         self.verticalLayout_4.addWidget(self.ADC_Au_checkBox)
 
@@ -1326,8 +1326,8 @@ class Ui_MainWindow(object):
 
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Y axis:", None))
         self.Y_axis_set_cbx.setItemText(0, QCoreApplication.translate("MainWindow", u"TEY", None))
-        self.Y_axis_set_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"TEY/Au", None))
-        self.Y_axis_set_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"Au", None))
+        self.Y_axis_set_cbx.setItemText(1, QCoreApplication.translate("MainWindow", u"Au", None))
+        self.Y_axis_set_cbx.setItemText(2, QCoreApplication.translate("MainWindow", u"Normalized", None))
         self.Y_axis_set_cbx.setItemText(3, QCoreApplication.translate("MainWindow", u"PD", None))
 
         self.Scan_set_Box.setTitle(QCoreApplication.translate("MainWindow", u"Scan_Set", None))

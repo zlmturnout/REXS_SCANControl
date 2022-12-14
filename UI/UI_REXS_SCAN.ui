@@ -816,7 +816,7 @@ border-top-color: rgb(33, 33, 33);}</string>
                     <bool>false</bool>
                    </property>
                    <property name="tristate">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -2537,12 +2537,12 @@ background-color: rgb(180, 249, 255);</string>
                  </item>
                  <item>
                   <property name="text">
-                   <string>TEY/Au</string>
+                   <string>Au</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Au</string>
+                   <string>Normalized</string>
                   </property>
                  </item>
                  <item>

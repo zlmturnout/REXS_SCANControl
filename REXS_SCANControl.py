@@ -3,10 +3,11 @@ import math
 import os
 import random
 import sys
-import time
+import time,re
 import traceback
 from collections import namedtuple
 import pandas as pd
+import numpy as np
 # use PySide6
 import PySide6
 from PySide6 import QtCore, QtWidgets,QtSvg
@@ -439,7 +440,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
             #start the monitor
-            #self.All_monitors_dict[daq_ch.name].start_monitor()
+            self.All_monitors_dict[daq_ch.name].start_monitor()
     
     @Slot(str,float)
     def get_channel_data(self,ch_name:str,value:float):
@@ -696,7 +697,9 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         # plot the all scan channel data acording to plot set 
         full_X_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
                             "timestamp":self.scan_timestamp_list}
-        self.plot_scan_data(x_data=full_X_data, y_data=self.active_data_dict)
+        Norm_Y_data=self.normalize_Y_data(self.active_data_dict)
+        # plot scan data
+        self.plot_scan_data(x_data=full_X_data, y_data=Norm_Y_data)
             
         # check if should start next scan round again
         self.curr_scan_num += 1
@@ -729,6 +732,27 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.done_msgbox=MyMsgBox('Channel Scan done', f'Scan on {self.scanX_name} finished', details=done_info, signal=0)
             self.done_msgbox.show()
 
+    def normalize_Y_data(self,data_dict:dict):
+        """normalize the active_data_dict into accessable data:
+        normized_dict_form= {"TEY":[datalist],"PD":[datalist],"Au":[datalist],"Normalized":[datalist]}
+
+        Args:
+            data_dict (dict): active_data_dict={ch_name:[datalist]}
+
+        Returns:
+            _type_: _description_
+        """
+        Normailed_Y_data={}
+        label_list=["TEY","Au","PD"]
+        for ch_name,ch_datalist in data_dict.items():
+            for label in label_list:
+                if re.search(label,ch_name):
+                    Normailed_Y_data[label]=ch_datalist
+        # normalized data by normalized_data=-log(TEY/Au)
+        Norm_data=np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
+        Normailed_Y_data["Normalized"]=Norm_data.tolist()
+        return Normailed_Y_data
+
 
     """
     end of the scan process part
@@ -748,23 +772,55 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.gridlayout = QGridLayout(self.Main_fig_box)
         self.gridlayout.addWidget(self.figure)
         self.gridlayout.addWidget(self.fig_ntb)
+        self.X_axis_set_cbx.currentIndexChanged.connect(self.update_figure)
+        self.Y_axis_set_cbx.currentIndexChanged.connect(self.update_figure)
 
-    def plot_scan_data(self, x_list: list, y_list: list, x_name: str, y_name: str):
+    @Slot()
+    def update_figure(self):
+        """update the scan plot set and plot new figure 
         """
-        plot any x_list and y_list data,and set the Axis name x_name,y_name
-        :param x_list:
-        :param y_list:
-        :param x_name:
-        :param y_name:
-        :return:
+        #print(f'now update figure with {self.active_data_dict.items()}')
+        if self.scan_range_set_flag==1 or self.scan_started_flag:
+            full_X_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
+                            "timestamp":self.scan_timestamp_list}
+            Norm_Y_data=self.normalize_Y_data(self.active_data_dict)
+            # plot scan data
+            self.plot_scan_data(x_data=full_X_data, y_data=Norm_Y_data)
+        else:
+            print(f'Current Axis:\nX-axis:{self.X_axis_set_cbx.currentText()} Y-axis:{self.Y_axis_set_cbx.currentText()}')
+
+    def plot_scan_data(self,x_data:dict, y_data:dict):
+        """plot the scan data according the plot set
+
+        Args:
+            x_data (dict): X_datadict={"ch_name_set":[datalist],"ch_name_rbv":[datalist],"timestamp":[datalist]}
+            y_data (dict): Y_datadict={"TEY":[datalist],"PD":[datalist],"Au":[datalist],"Normalized":[datalist]}
         """
-        # plot
         self.figure.axes.cla()
+        # for x_list ["ReadBack","SetPoint","timestamp"]
+        x_list=x_data[f'{self.scanX_name}_set'] # default is the set value list
+        if self.X_axis_set_cbx.currentText()=="ReadBack":
+            x_list=x_data[f'{self.scanX_name}_rbv']
+        elif self.X_axis_set_cbx.currentText()=="Timestamp":
+            x_list=x_data['timestamp']
+        else:
+            pass
+        # for Y list
+        y_axis=self.Y_axis_set_cbx.currentText() # ["TEY","Au","PD","Normalized"]
+        y_list=y_data[y_axis]
         self.figure.axes.plot(x_list, y_list, marker='o', markersize=4, markerfacecolor='orchid',
-                              markeredgecolor='orchid', linestyle='-', color='c')
-        self.figure.axes.set_xlabel(x_name, fontsize=16, color='m')
-        self.figure.axes.set_ylabel(y_name, fontsize=16, color='m')
+                               markeredgecolor='orchid', linestyle='-', color='c',label=y_axis)
+        if y_axis=="Normalized":
+            self.figure.axes.plot(x_list, y_data["TEY"], marker='*', markersize=4, markerfacecolor='limegreen',
+                                markeredgecolor='limegreen', linestyle=':', color='m',label="TEY")
+            self.figure.axes.plot(x_list, y_data["Au"], marker='s', markersize=4, markerfacecolor='lightsalmon',
+                                markeredgecolor='lightsalmon', linestyle='--', color='C1',label="Au")
+        self.figure.axes.legend()
+        # draw and plot
+        self.figure.axes.set_xlabel(self.scanX_name, fontsize=16, color='m')
+        self.figure.axes.set_ylabel(y_axis, fontsize=16, color='m')
         self.figure.draw()
+
 
     def get_full_data(self):
         """
