@@ -309,12 +309,22 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.SSRF_timer_runFlag=False
         self.SSRF_timer.timeout.connect(self.get_SSRF_BeamStatus)
         self.SSRF_beamline=SSRFBeamLine()
+        today = time.strftime('%Y-%m-%d', time.localtime())
+        self.Today_label.setText(today+"@E-line20U2")
         self.SSRF_timer.start(1000)
+        self.username="User"
+        self.UserName_input.returnPressed.connect(self.set_username)
     
     def get_SSRF_BeamStatus(self):
         beam_current=self.SSRF_beamline.beamcurrent
         self.BeamCurrent_lcd.display(beam_current)    
     
+    @Slot()
+    def set_username(self):
+        username=self.UserName_input.text()
+        self.username=username+"@E-line20U2"
+        print(f'current-user:{self.username}')
+        self.UserName_input.setStyleSheet("QLineEdit{background-color: rgb(99, 239, 255);color: rgb(255, 124, 133);}")
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
     start of data channel selection part

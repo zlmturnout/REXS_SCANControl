@@ -143,6 +143,8 @@ class ADCMonitor(QWidget,Ui_Form):
         self.__init__datasave()
         self.Channel_cbx.currentIndexChanged['int'].connect(self.set_channel)
         self.Range_cbx.currentIndexChanged['int'].connect(self.set_ulRange)
+        self.Channel_cbx.setCurrentIndex(self.channel)
+        self.Range_cbx.setCurrentIndex(self.ul_range_num)
 
 
 # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
