@@ -205,7 +205,8 @@ class PVMonitor(QWidget,Ui_Form):
          save_header=self.pvname.replace(":","_")
          filename=f'{save_header}-{cur_datetime}N{self.datasave_num}'
          today_folder=createPath(os.path.join(save_path,time.strftime('%Y-%m-%d', time.localtime())))
-         self.save_all_data(all_valid_data,today_folder,filename)
+         routine_folder=createPath(os.path.join(today_folder,"PVMonitorData"))
+         self.save_all_data(all_valid_data,routine_folder,filename,filetype=('excel',"sqlite"))
         
     def get_full_data(self):
         """
@@ -220,22 +221,26 @@ class PVMonitor(QWidget,Ui_Form):
         return valid_full_data
 
 
-    def save_all_data(self,full_data:dict,path,filename):
+    def save_all_data(self,full_data:dict,path,filename,filetype:tuple=("excel","csv","sqlite","json")):
         """save all sensor data
         save to excel xlsx,json,csv and sqlite database
         Args:
             full_data[dict]: full data in dict
             path: save path
             filename: filename
+            filetype:tuple(excel,csv,sqlite,json)
         """
         if full_data and os.path.isdir(path):
-            dict_to_csv(full_data, path, filename + '.csv')
-            dict_to_excel(full_data, path, filename + '.xlsx')
-            dict_to_json(full_data, path, filename + '.json')
-            dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'PVMonitorData.db')
+            if "csv" in filetype:
+                dict_to_csv(full_data, path, filename + '.csv')
+            if "excel" in filetype:
+                dict_to_excel(full_data, path, filename + '.xlsx')
+            if "sqlite" in filetype:
+                dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'PVMonitorData.db')
+            if "json" in filetype:
+                dict_to_json(full_data, path, filename + '.json')
             details=f'save to excel/csv/json files.\nFilename:{path+filename}\nSqlite database:{SQLiteDB_path}/SensorData.db\ntablename:{filename}'
-            print(details)
-            
+            print(details)            
 
     def usr_save_full_data(self, full_data: dict, path: str, usrname='usr_test', usr_define: int = 1):
         """
