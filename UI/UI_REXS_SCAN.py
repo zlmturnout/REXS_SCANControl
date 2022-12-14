@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_REXS_SCAN.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -462,14 +462,14 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_7.addWidget(self.label_8)
 
-        self.label_10 = QLabel(self.groupBox_2)
-        self.label_10.setObjectName(u"label_10")
-        self.label_10.setFont(font1)
-        self.label_10.setStyleSheet(u"background-color: rgb(255, 85, 127);\n"
+        self.SS2_status_label = QLabel(self.groupBox_2)
+        self.SS2_status_label.setObjectName(u"SS2_status_label")
+        self.SS2_status_label.setFont(font1)
+        self.SS2_status_label.setStyleSheet(u"background-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);")
-        self.label_10.setAlignment(Qt.AlignCenter)
+        self.SS2_status_label.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_7.addWidget(self.label_10)
+        self.horizontalLayout_7.addWidget(self.SS2_status_label)
 
 
         self.verticalLayout_9.addLayout(self.horizontalLayout_7)
@@ -1315,7 +1315,7 @@ class Ui_MainWindow(object):
         self.UserName_input.setText("")
         self.UserName_input.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter UserName", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"mA", None))
-        self.label_10.setText(QCoreApplication.translate("MainWindow", u"on", None))
+        self.SS2_status_label.setText(QCoreApplication.translate("MainWindow", u"on", None))
         self.Icon_label.setText("")
         self.Main_fig_box.setTitle(QCoreApplication.translate("MainWindow", u"MainFigure", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Plot_set", None))

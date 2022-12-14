@@ -158,13 +158,19 @@ class PVsetThread(QThread):
             self._motor_mvn_flag = value
 
 SSRF_BeamcurentPV="SR-BI:DCCT:CURRENT"
+PV_20U_OpenSS2="X20U1:OP:SS2_S:OpenSts:Bl"
 class SSRFBeamLine(object):
     
     def __init__(self) -> None:
         super(SSRFBeamLine, self).__init__()
+        self.monitor_beamcurrent()
+        self.__beamcurrent=-1
+        self.__SS2status_20U=0 # 1 is open=beam on, 0 is close=beam off
+
+    def monitor_beamcurrent(self):
         self.BeamCurrent_pv = PV(SSRF_BeamcurentPV, callback=self.SSRFCurrent_rbv)
         self.__beamcurrent=self.BeamCurrent_pv.get() if self.BeamCurrent_pv.get() else -1
-        
+
     def SSRFCurrent_rbv(self, pvname, value, **kwargs):
         """
         read back value
@@ -181,3 +187,25 @@ class SSRFBeamLine(object):
     @beamcurrent.setter
     def beamcurrent(self,current:float):
         self.__beamcurrent=current
+
+    def monitor_20USS2(self):
+        self.PV_20U_OpenSS2 = PV(PV_20U_OpenSS2, callback=self.PV_20U_OpenSS2_rbv)
+        self.__SS2status_20U=self.PV_20U_OpenSS2.get() if self.PV_20U_OpenSS2.get() else 0
+
+    def PV_20U_OpenSS2_rbv(self,pvname,value,**kwargs):
+        if isinstance(value,int):
+            self.__SS2status_20U=value
+    
+    @property
+    def SS2status_20U(self):
+        """
+        ** SS2 shutter status (0,1) of 20U ** 
+        <1 is open=beam on, 0 is close=beam off>
+        Returns:
+            _type_: _description_
+        """
+        return self.__SS2status_20U
+    
+    @SS2status_20U.setter
+    def SS2status_20U(self,status:int):
+        self.__SS2status_20U=status

@@ -1666,7 +1666,7 @@ border-top-color: rgb(33, 33, 33);}</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_10">
+                  <widget class="QLabel" name="SS2_status_label">
                    <property name="font">
                     <font>
                      <family>Arial</family>

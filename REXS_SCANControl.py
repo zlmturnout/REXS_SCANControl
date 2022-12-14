@@ -312,16 +312,21 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.SSRF_beamline=SSRFBeamLine()
         today = time.strftime('%Y-%m-%d', time.localtime())
         self.Today_label.setText(today+"@E-line20U2")
-        self.SSRF_timer.start(1000)
+        self.SSRF_timer.start(2000)
         self.username="User"
         self.UserName_input.returnPressed.connect(self.set_username)
     
     def get_SSRF_BeamStatus(self):
         beam_current=self.SSRF_beamline.beamcurrent
         self.BeamCurrent_lcd.display(beam_current)
-        if "TEY_V" in self.Full_DataChannnels:
-            pass
-            #print(f'get TEY_V: {self.Full_DataChannnels["TEY_V"].data[-1]} V')    
+        SS2status_20U=self.SSRF_beamline.SS2status_20U # 1 is open=beam on, 0 is close=beam off
+        if SS2status_20U==1:
+            self.SS2_status_label.setText("ON")
+            self.SS2_status_label.setStyleSheet("QLabel{background-color: rgb(255, 85, 127);color: rgb(255, 255, 255);}")
+        elif SS2status_20U==0:
+            self.SS2_status_label.setText("OFF")
+            self.SS2_status_label.setStyleSheet("QLabel{background-color: rgb(0, 255, 127);color: rgb(255, 255, 255);}")
+
     
     @Slot()
     def set_username(self):
@@ -697,11 +702,12 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.scan_timestamp_list.append(timestamp)
         # plot the all scan channel data acording to plot set 
-        full_X_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
-                            "timestamp":self.scan_timestamp_list}
-        Norm_Y_data=self.normalize_Y_data(self.active_data_dict)
-        # plot scan data
-        self.plot_scan_data(x_data=full_X_data, y_data=Norm_Y_data)
+        # full_X_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
+        #                     "timestamp":self.scan_timestamp_list}
+        # Norm_Y_data=self.normalize_Y_data(self.active_data_dict)
+        # # plot scan data
+        # self.plot_scan_data(x_data=full_X_data, y_data=Norm_Y_data)
+        self.update_figure()
             
         # check if should start next scan round again
         self.curr_scan_num += 1
@@ -753,7 +759,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         # normalized data by normalized_data=-log(TEY/Au)
         Norm_data=np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
         Normailed_Y_data["Normalized"]=Norm_data.tolist()
-        return Normailed_Y_data
+        return pd.DataFrame(Normailed_Y_data) 
 
 
     """
@@ -768,6 +774,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     """
     def __ini_plot(self):
         self.figure = Myplot()
+        self.twinX_axis=self.figure.axes.twinx()
         # add NavigationToolbar in the figure (widgets)
         self.fig_ntb = NavigationToolbar(self.figure, self)
         # add the figure into the Plot box
@@ -782,16 +789,19 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         """update the scan plot set and plot new figure 
         """
         #print(f'now update figure with {self.active_data_dict.items()}')
-        if self.scan_range_set_flag==1 or self.scan_started_flag:
+        if self.scan_range_set_flag==1 or self.scan_started_flag or self.channel_monitor_on_flag:
             full_X_data={f'{self.scanX_name}_set':self.scan_X_data_set,f'{self.scanX_name}_rbv':self.scan_X_data_rbv,
                             "timestamp":self.scan_timestamp_list}
             Norm_Y_data=self.normalize_Y_data(self.active_data_dict)
+            Norm_X_data=pd.DataFrame(full_X_data)
+            Norm_X_data['Timestamp']=pd.to_datetime(Norm_X_data['timestamp'])
             # plot scan data
-            self.plot_scan_data(x_data=full_X_data, y_data=Norm_Y_data)
+            #self.plot_scan_data(x_data=full_X_data, y_data=Norm_Y_data)
+            self.plot_scan_data(x_data=Norm_X_data, y_data=Norm_Y_data)
         else:
             print(f'Current Axis:\nX-axis:{self.X_axis_set_cbx.currentText()} Y-axis:{self.Y_axis_set_cbx.currentText()}')
 
-    def plot_scan_data(self,x_data:dict, y_data:dict):
+    def plot_scan_data(self,x_data:pd.DataFrame, y_data:pd.DataFrame):
         """plot the scan data according the plot set
 
         Args:
@@ -799,28 +809,37 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             y_data (dict): Y_datadict={"TEY":[datalist],"PD":[datalist],"Au":[datalist],"Normalized":[datalist]}
         """
         self.figure.axes.cla()
+        self.twinX_axis.cla()
         #  x_list ["ReadBack","SetPoint","timestamp"]
         x_list=x_data[f'{self.scanX_name}_set'] # default is the set value list
+        x_label=f'{self.scanX_name}_set'
         if self.X_axis_set_cbx.currentText()=="ReadBack":
             x_list=x_data[f'{self.scanX_name}_rbv']
+            x_label=f'{self.scanX_name}_rbv'
         elif self.X_axis_set_cbx.currentText()=="Timestamp":
-            x_list=x_data['timestamp']
+            x_list=x_data['Timestamp']
+            x_label='Timestamp'
         else:
             pass
         # for Y list
-        y_axis=self.Y_axis_set_cbx.currentText() # ["TEY","Au","PD","Normalized"]
-        y_list=y_data[y_axis]
+        y_label=self.Y_axis_set_cbx.currentText() # ["TEY","Au","PD","Normalized"]
+        y_list=y_data[y_label]
         self.figure.axes.plot(x_list, y_list, marker='o', markersize=4, markerfacecolor='orchid',
-                               markeredgecolor='orchid', linestyle='-', color='c',label=y_axis)
-        if y_axis=="Normalized":
-            self.figure.axes.plot(x_list, y_data["TEY"], marker='*', markersize=4, markerfacecolor='limegreen',
-                                markeredgecolor='limegreen', linestyle=':', color='m',label="TEY")
-            self.figure.axes.plot(x_list, y_data["Au"], marker='s', markersize=4, markerfacecolor='lightsalmon',
+                               markeredgecolor='orchid', linestyle='-', color='c',label=y_label)
+        self.figure.axes.legend(loc='upper right')
+        self.figure.axes.figure.autofmt_xdate(rotation=25)
+        # show double Y axis plot 
+        if y_label=="Normalized":
+            self.twinX_axis.plot(x_list, y_data["TEY"], marker='*', markersize=4, markerfacecolor='limegreen',
+                                markeredgecolor='limegreen', linestyle=':', color='deepskyblue',label="TEY")
+            self.twinX_axis.plot(x_list, y_data["Au"], marker='s', markersize=4, markerfacecolor='lightsalmon',
                                 markeredgecolor='lightsalmon', linestyle='--', color='C1',label="Au")
-        self.figure.axes.legend()
+            self.twinX_axis.legend(loc='lower right')
+            self.twinX_axis.set_ylabel("Voltage(V)",fontsize=16,color='lightsalmon')
+            self.twinX_axis.tick_params(axis='y',labelcolor='lightsalmon')
         # draw and plot
-        self.figure.axes.set_xlabel(self.scanX_name, fontsize=16, color='m')
-        self.figure.axes.set_ylabel(y_axis, fontsize=16, color='m')
+        self.figure.axes.set_xlabel(x_label, fontsize=16, color='m')
+        self.figure.axes.set_ylabel(y_label, fontsize=16, color='m')
         self.figure.draw()
 
 
@@ -903,19 +922,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             else:
                 pass
 
-    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
-
-
-
-            
-
-
-
-
-
-
     """
-    end of Scan process part
+    end of data save and plot part
     """   
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
 
@@ -924,10 +932,10 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     start of close event
     """
     def closeEvent(self, event):
-        if self._start_plot_flag == 1:
+        if self.scan_started_flag:
             self.raise_info('Stop the scan process before exit!')
             event.ignore()
-        elif self._start_plot_flag == 0:
+        else:
             close = QMessageBox.question(self,
                                                    "QUIT",
                                                    "Are you sure to exit?",
