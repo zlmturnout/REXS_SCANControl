@@ -616,6 +616,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                                 f'You should confirm to start scan process.'
             logger.info(detailed_info)
             # clean the active_data_dict
+            self.curr_scan_num=0
+            self.clear_all_data()
             for ch,ch_datalist in self.active_data_dict.items():
                 ch_datalist=[]
             self.msg_box = MyMsgBox('Channel Scan', f'Scan on {self.scanX_name}', details=detailed_info, signal=1)
@@ -638,7 +640,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.total_scan_num=len(self.scan_X_set_list)
             # start emit signal for PV sets
             self.scan_start_sig.connect(self.set_X_PV)
-            self.scan_start_sig.emit([self.cur_scan_num,"Set_X"])
+            self.scan_start_sig.emit([self.curr_scan_num,"Set_X"])
             logger.info(f'begin set PV value')
             # calculate time cost
             time_cost = self.expect_time_cost(scan_mode='ADC',scan_num=len(self.scan_X_set_list), t_interval=500)
@@ -661,7 +663,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.scan_started_flag=True
             X_setValue=self.scan_X_set_list[Xset_info[0]]
             self.XsetThread=PVsetThread(set_pv=self.scan_PVset,set_value=X_setValue,rbv_pv=self.scan_PVrbv,
-                                            movn_pv=self.scan_PVmovn,check_num=0,resolution=0.2)
+                                            movn_pv=self.scan_PVmovn,check_num=0,resolution=0.02)
             self.XsetThread.done_signal.connect(self.Xset_done)
             self.XsetThread.start()
     
@@ -727,8 +729,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             # show on msg box
             time_cost=time.time()-self.scan_start_time
             done_info=f'scan {self.scanX_name} finished successfully!\n Total scan num:{self.curr_scan_num}\n\
-                        Time cost:{time_cost:.2f}~{str(datetime.timedelta(seconds=time_cost))}\n\
-                        save to path:{save_path}'
+            Time cost:{time_cost:.2f}~{str(datetime.timedelta(seconds=time_cost))}\n\
+            save to path:{save_path}'
             self.done_msgbox=MyMsgBox('Channel Scan done', f'Scan on {self.scanX_name} finished', details=done_info, signal=0)
             self.done_msgbox.show()
 
@@ -797,7 +799,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             y_data (dict): Y_datadict={"TEY":[datalist],"PD":[datalist],"Au":[datalist],"Normalized":[datalist]}
         """
         self.figure.axes.cla()
-        # for x_list ["ReadBack","SetPoint","timestamp"]
+        #  x_list ["ReadBack","SetPoint","timestamp"]
         x_list=x_data[f'{self.scanX_name}_set'] # default is the set value list
         if self.X_axis_set_cbx.currentText()=="ReadBack":
             x_list=x_data[f'{self.scanX_name}_rbv']

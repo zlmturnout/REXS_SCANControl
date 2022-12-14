@@ -83,7 +83,7 @@ class PVsetThread(QThread):
         self._set_flag = True
         if self._set_pv.connect():
             self._set_pv.put(self._set_value)
-            # print('set value now: %f' % self._set_value)
+            print('set value now: %f' % self._set_value)
             self.msleep(100)
             # print('sleep 100ms')
             t_motor = time.time()
@@ -109,9 +109,10 @@ class PVsetThread(QThread):
             t_cur = time.time()
             # Set time out=10s if the target value are not reached
             time_out = 3.0 + abs(final_pos - self._set_value) * 0.5
+            #print(f'time out is {time_out}')
             while time.time() - t_cur < time_out:
                 # self.resolution=0.02
-                if abs(final_pos - self._set_value) < self.resolution*1.5:
+                if abs(final_pos - self._set_value) < self.resolution*0.8:
                     t_jump = time.time()
                     self.set_info = 'done'
                     break
