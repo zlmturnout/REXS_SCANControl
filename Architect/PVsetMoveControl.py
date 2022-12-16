@@ -108,11 +108,11 @@ class PVsetThread(QThread):
             self.msleep(100)
             t_cur = time.time()
             # Set time out=10s if the target value are not reached
-            time_out = 3.0 + abs(final_pos - self._set_value) * 0.5
+            time_out = 3.0 + abs(final_pos - self._set_value) * 0.3
             #print(f'time out is {time_out}')
             while time.time() - t_cur < time_out:
                 # self.resolution=0.02
-                if abs(final_pos - self._set_value) < self.resolution*0.8:
+                if abs(final_pos - self._set_value) < self.resolution*1.0:
                     t_jump = time.time()
                     self.set_info = 'done'
                     break
@@ -134,7 +134,7 @@ class PVsetThread(QThread):
             self._pv_RBV.remove_callback()
             if self._mvn:
                 self._pv_mvn.remove_callback() # remove mvn call back
-            self.msleep(100)
+            self.msleep(1000)
             self.done_signal.emit(info)
 
     def readback_val(self, pvname, value, **kwargs):
@@ -158,7 +158,7 @@ class PVsetThread(QThread):
             self._motor_mvn_flag = value
 
 SSRF_BeamcurentPV="SR-BI:DCCT:CURRENT"
-PV_20U_OpenSS2="X20U1:OP:SS2_S:OpenSts:Bl"
+PV_20U_OpenSS2="X20U1:OP:SS2_S:OpenSts:BI"
 class SSRFBeamLine(object):
     
     def __init__(self) -> None:
@@ -166,6 +166,7 @@ class SSRFBeamLine(object):
         self.monitor_beamcurrent()
         self.__beamcurrent=-1
         self.__SS2status_20U=0 # 1 is open=beam on, 0 is close=beam off
+        self.monitor_20USS2()
 
     def monitor_beamcurrent(self):
         self.BeamCurrent_pv = PV(SSRF_BeamcurentPV, callback=self.SSRFCurrent_rbv)

@@ -689,14 +689,14 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_5.addWidget(self.label)
 
-        self.Max_input = QLineEdit(self.Scan_set_Box)
-        self.Max_input.setObjectName(u"Max_input")
+        self.Min_input = QLineEdit(self.Scan_set_Box)
+        self.Min_input.setObjectName(u"Min_input")
         sizePolicy4 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.Max_input.sizePolicy().hasHeightForWidth())
-        self.Max_input.setSizePolicy(sizePolicy4)
-        self.Max_input.setMinimumSize(QSize(120, 30))
+        sizePolicy4.setHeightForWidth(self.Min_input.sizePolicy().hasHeightForWidth())
+        self.Min_input.setSizePolicy(sizePolicy4)
+        self.Min_input.setMinimumSize(QSize(120, 30))
         palette14 = QPalette()
         brush11 = QBrush(QColor(255, 255, 255, 255))
         brush11.setStyle(Qt.SolidPattern)
@@ -708,15 +708,15 @@ class Ui_MainWindow(object):
         palette14.setBrush(QPalette.Inactive, QPalette.Base, brush11)
         palette14.setBrush(QPalette.Disabled, QPalette.Text, brush7)
         palette14.setBrush(QPalette.Disabled, QPalette.Base, brush3)
-        self.Max_input.setPalette(palette14)
-        self.Max_input.setFont(font1)
-        self.Max_input.setFrame(False)
-        self.Max_input.setAlignment(Qt.AlignCenter)
-        self.Max_input.setReadOnly(True)
-        self.Max_input.setCursorMoveStyle(Qt.LogicalMoveStyle)
-        self.Max_input.setClearButtonEnabled(False)
+        self.Min_input.setPalette(palette14)
+        self.Min_input.setFont(font1)
+        self.Min_input.setFrame(False)
+        self.Min_input.setAlignment(Qt.AlignCenter)
+        self.Min_input.setReadOnly(True)
+        self.Min_input.setCursorMoveStyle(Qt.LogicalMoveStyle)
+        self.Min_input.setClearButtonEnabled(False)
 
-        self.horizontalLayout_5.addWidget(self.Max_input)
+        self.horizontalLayout_5.addWidget(self.Min_input)
 
         self.label_2 = QLabel(self.Scan_set_Box)
         self.label_2.setObjectName(u"label_2")
@@ -728,11 +728,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_5.addWidget(self.label_2)
 
-        self.Min_input = QLineEdit(self.Scan_set_Box)
-        self.Min_input.setObjectName(u"Min_input")
-        sizePolicy4.setHeightForWidth(self.Min_input.sizePolicy().hasHeightForWidth())
-        self.Min_input.setSizePolicy(sizePolicy4)
-        self.Min_input.setMinimumSize(QSize(120, 30))
+        self.Max_input = QLineEdit(self.Scan_set_Box)
+        self.Max_input.setObjectName(u"Max_input")
+        sizePolicy4.setHeightForWidth(self.Max_input.sizePolicy().hasHeightForWidth())
+        self.Max_input.setSizePolicy(sizePolicy4)
+        self.Max_input.setMinimumSize(QSize(120, 30))
         palette15 = QPalette()
         palette15.setBrush(QPalette.Active, QPalette.Text, brush11)
         palette15.setBrush(QPalette.Active, QPalette.Base, brush12)
@@ -740,15 +740,15 @@ class Ui_MainWindow(object):
         palette15.setBrush(QPalette.Inactive, QPalette.Base, brush11)
         palette15.setBrush(QPalette.Disabled, QPalette.Text, brush7)
         palette15.setBrush(QPalette.Disabled, QPalette.Base, brush3)
-        self.Min_input.setPalette(palette15)
-        self.Min_input.setFont(font1)
-        self.Min_input.setFrame(False)
-        self.Min_input.setAlignment(Qt.AlignCenter)
-        self.Min_input.setReadOnly(True)
-        self.Min_input.setCursorMoveStyle(Qt.LogicalMoveStyle)
-        self.Min_input.setClearButtonEnabled(False)
+        self.Max_input.setPalette(palette15)
+        self.Max_input.setFont(font1)
+        self.Max_input.setFrame(False)
+        self.Max_input.setAlignment(Qt.AlignCenter)
+        self.Max_input.setReadOnly(True)
+        self.Max_input.setCursorMoveStyle(Qt.LogicalMoveStyle)
+        self.Max_input.setClearButtonEnabled(False)
 
-        self.horizontalLayout_5.addWidget(self.Min_input)
+        self.horizontalLayout_5.addWidget(self.Max_input)
 
         self.label_3 = QLabel(self.Scan_set_Box)
         self.label_3.setObjectName(u"label_3")
@@ -874,14 +874,14 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.Start_scan_btn)
 
-        self.Stop_scan_btm = QPushButton(self.Scan_set_Box)
-        self.Stop_scan_btm.setObjectName(u"Stop_scan_btm")
-        sizePolicy4.setHeightForWidth(self.Stop_scan_btm.sizePolicy().hasHeightForWidth())
-        self.Stop_scan_btm.setSizePolicy(sizePolicy4)
-        self.Stop_scan_btm.setMinimumSize(QSize(120, 45))
-        self.Stop_scan_btm.setFont(font3)
-        self.Stop_scan_btm.setFocusPolicy(Qt.WheelFocus)
-        self.Stop_scan_btm.setStyleSheet(u"QPushButton{background-color:rgb(255, 91, 58);border:2px;border-radius:10px;padding:2px 4px;selection-color: rgb(255, 85, 127);color:rgb(255, 255, 255);border-style:inset;border-top-color: rgb(164, 160, 181);border-left-color: rgb(138, 138, 138);\n"
+        self.Stop_scan_btn = QPushButton(self.Scan_set_Box)
+        self.Stop_scan_btn.setObjectName(u"Stop_scan_btn")
+        sizePolicy4.setHeightForWidth(self.Stop_scan_btn.sizePolicy().hasHeightForWidth())
+        self.Stop_scan_btn.setSizePolicy(sizePolicy4)
+        self.Stop_scan_btn.setMinimumSize(QSize(120, 45))
+        self.Stop_scan_btn.setFont(font3)
+        self.Stop_scan_btn.setFocusPolicy(Qt.WheelFocus)
+        self.Stop_scan_btn.setStyleSheet(u"QPushButton{background-color:rgb(255, 91, 58);border:2px;border-radius:10px;padding:2px 4px;selection-color: rgb(255, 85, 127);color:rgb(255, 255, 255);border-style:inset;border-top-color: rgb(164, 160, 181);border-left-color: rgb(138, 138, 138);\n"
 "border-right-color: rgb(56, 56, 56);\n"
 "border-bottom-color: rgb(33, 33, 33);}\n"
 "\n"
@@ -892,7 +892,7 @@ class Ui_MainWindow(object):
 "border-left-color: rgb(56, 56, 56);\n"
 "border-top-color: rgb(33, 33, 33);}")
 
-        self.horizontalLayout_6.addWidget(self.Stop_scan_btm)
+        self.horizontalLayout_6.addWidget(self.Stop_scan_btn)
 
         self.Clear_Save_btn = QPushButton(self.Scan_set_Box)
         self.Clear_Save_btn.setObjectName(u"Clear_Save_btn")
@@ -1332,13 +1332,13 @@ class Ui_MainWindow(object):
 
         self.Scan_set_Box.setTitle(QCoreApplication.translate("MainWindow", u"Scan_Set", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"From", None))
-        self.Max_input.setInputMask("")
-        self.Max_input.setText("")
-        self.Max_input.setPlaceholderText("")
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"To", None))
         self.Min_input.setInputMask("")
         self.Min_input.setText("")
         self.Min_input.setPlaceholderText("")
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"To", None))
+        self.Max_input.setInputMask("")
+        self.Max_input.setText("")
+        self.Max_input.setPlaceholderText("")
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Num", None))
         self.Num_input.setInputMask("")
         self.Num_input.setText("")
@@ -1351,12 +1351,12 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(statustip)
         self.Start_scan_btn.setText(QCoreApplication.translate("MainWindow", u"Start_Scan", None))
 #if QT_CONFIG(tooltip)
-        self.Stop_scan_btm.setToolTip("")
+        self.Stop_scan_btn.setToolTip("")
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(statustip)
-        self.Stop_scan_btm.setStatusTip(QCoreApplication.translate("MainWindow", u"Stop scan", None))
+        self.Stop_scan_btn.setStatusTip(QCoreApplication.translate("MainWindow", u"Stop scan", None))
 #endif // QT_CONFIG(statustip)
-        self.Stop_scan_btm.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
+        self.Stop_scan_btn.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
 #if QT_CONFIG(tooltip)
         self.Clear_Save_btn.setToolTip("")
 #endif // QT_CONFIG(tooltip)
@@ -1375,6 +1375,8 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:700;\">start program...</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:700;\"><br /></p></body></html>", None))

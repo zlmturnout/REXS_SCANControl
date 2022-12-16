@@ -224,7 +224,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         file format should be excel(.xlsx)
         :return:
         """
-        print('save data')
+        #print('save data')
         scan_data = self.get_full_data()
         self.usr_save_full_data(scan_data, save_path, usr_define=1)
 
@@ -313,13 +313,15 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         today = time.strftime('%Y-%m-%d', time.localtime())
         self.Today_label.setText(today+"@E-line20U2")
         self.SSRF_timer.start(2000)
-        self.username="User"
+        self.username="E-line20U2_User"
         self.UserName_input.returnPressed.connect(self.set_username)
+        print(f'current-user:{self.username}')
     
     def get_SSRF_BeamStatus(self):
         beam_current=self.SSRF_beamline.beamcurrent
         self.BeamCurrent_lcd.display(beam_current)
         SS2status_20U=self.SSRF_beamline.SS2status_20U # 1 is open=beam on, 0 is close=beam off
+        #print(SS2status_20U)
         if SS2status_20U==1:
             self.SS2_status_label.setText("ON")
             self.SS2_status_label.setStyleSheet("QLabel{background-color: rgb(255, 85, 127);color: rgb(255, 255, 255);}")
@@ -331,7 +333,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     @Slot()
     def set_username(self):
         username=self.UserName_input.text()
-        self.username=username+"@E-line20U2"
+        #self.username=username+"@E-line20U2"
+        self.username=username
         print(f'current-user:{self.username}')
         self.UserName_input.setStyleSheet("QLineEdit{background-color: rgb(99, 239, 255);color: rgb(255, 124, 133);}")
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
@@ -405,7 +408,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             try:
                 self.Full_DataChannnels={}
                 self.set_channels()
-                print(self.Full_DataChannnels)
+                #print(self.Full_DataChannnels)
                 for ch_name,daq_ch in self.Full_DataChannnels.items():
                     self.add_channel_monitor(daq_ch)
             except Exception as e:
@@ -436,7 +439,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         """             
         if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
             # adc address=(host,port,channel,ul_range_n)
-            print(daq_ch.address[2],daq_ch.name)
+            #print(daq_ch.address[2],daq_ch.name)
             self.All_monitor_count+=1
             self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
             board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
@@ -560,8 +563,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                             f' total points: {len(scan_range_list[-1])}, you can start now')
             self.scan_range_set_flag = 1
             #print(self._scan_info)
-            min_value=scan_range_list[-1][0]
-            max_value=scan_range_list[-1][-1]
+            min_value=np.min(scan_range_list[-1])
+            max_value=np.max(scan_range_list[-1])
             num=len(scan_range_list[-1])
             self.Min_input.setText(f'{min_value}')
             self.Max_input.setText(f'{max_value}')
@@ -569,7 +572,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             logger.info(f'get scan info: {self._scan_info}')
 
     def Add_pv_monitor(self,pvname,tag=None):
-        print(f'get pvname: {pvname}')
+        #print(f'get pvname: {pvname}')
         if pvname not in self.pvmonitors_dict:
             # add one monitor
             self.pvmonitors_count+=1
@@ -579,7 +582,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.pvmonitors_dict[pvname].close_sig.connect(self.close_pvmonitor)
         else:
             print(f'already have monitor: {pvname}')
-            self.statusLabel.setText(f'already have monitor: {pvname}')
+            #self.statusLabel.setText(f'already have monitor: {pvname}')
             self.pvmonitors_dict[pvname].showMaximized()
         return self.pvmonitors_dict[pvname].get_pv_value()
 
@@ -617,7 +620,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         # check all status (channel set,range set) are OK
         if self.scan_range_set_flag==1 and self.channel_monitor_on_flag and not self.scan_started_flag:
             detailed_info = f'Scan set: will scan {self.scanX_name}\n Current value: {self.pv_current_value}\n' \
-                                f'Scan range: from {self.Min_input.text()} to {self.Max_input.text()}ms with totally {self.Num_input.text()} points\n' \
+                                f'Scan range: from {self.Min_input.text()} to {self.Max_input.text()} with totally {self.Num_input.text()} points\n' \
                                 f'You should confirm to start scan process.'
             logger.info(detailed_info)
             # clean the active_data_dict
@@ -679,7 +682,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         Args:
             done_info (list): [read_back,set_value,check_n,set_info]
         """
-        print(done_info)
+        #print(done_info)
         if done_info[-1]=="done" or 'done with time out':
             # set X done
             self.scan_X_data_rbv.append(done_info[0])
@@ -690,7 +693,12 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 for ch_name,ch_data_list in self.active_data_dict.items():
                     if isinstance(ch_data_list,list):
                         # add latest data from DATAChannel of this ch_name to active_data_dict 
-                        ch_data_list.append(self.Full_DataChannnels[ch_name].data[-1])
+                        # average on last 5 points
+                        if len(self.Full_DataChannnels[ch_name].data)>5:
+                            latest_data=np.average(self.Full_DataChannnels[ch_name].data[-5:]) 
+                        else:
+                            latest_data=self.Full_DataChannnels[ch_name].data[-1] 
+                        ch_data_list.append(latest_data)
             except Exception as e:
                 print(e)
                 logger.error(traceback.format_exc() + str(e))
@@ -728,7 +736,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             full_data=self.get_full_data()
             t_stamp = time.strftime('%Y-%m-%d-%H-%M', time.localtime())
             self._save_N += 1
-            filename = f'GR_counts_data_{t_stamp}_{self._save_N}'
+            filename = f'TEY_{self.username}_{t_stamp}_{self._save_N}'
             folder = time.strftime('%Y-%m-%d', time.localtime())
             save_folder = createPath(os.path.join(save_path, folder))
             self.save_scan_data(full_data, save_folder, filename)
@@ -757,7 +765,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 if re.search(label,ch_name):
                     Normailed_Y_data[label]=ch_datalist
         # normalized data by normalized_data=-log(TEY/Au)
-        Norm_data=np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
+        Norm_data=-np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
         Normailed_Y_data["Normalized"]=Norm_data.tolist()
         return pd.DataFrame(Normailed_Y_data) 
 
@@ -767,6 +775,58 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
     """
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
 
+    # # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
+    # """
+    # stop clear data set
+    # """
+
+    @log_exceptions(log_func=logger.error)
+    @Slot()
+    def on_Stop_scan_btn_clicked(self):
+        """
+        stop scan disconnect start_scan signal
+        :return:
+        """
+        try:
+            if not self.scan_started_flag:
+                self.raise_info('nothing to stop')
+            elif self.scan_started_flag :
+                self.scan_start_sig.disconnect(self.set_X_PV)
+                #self.scan_started_flag = False
+        except Exception as e:
+            print(e)
+            logger.error(traceback.format_exc() + str(e))
+        else:
+            # the scan process has stopped
+            self.scan_started_flag = False
+            # save data
+            scan_data = self.get_full_data()
+            folder = time.strftime('%Y-%m-%d', time.localtime())
+            save_folder = createPath(os.path.join(save_path, folder))
+            self.usr_save_full_data(scan_data, path=save_folder, usr_define=1)
+            
+
+    @log_exceptions(log_func=logger.error)
+    @Slot()
+    def on_Clear_Save_btn_clicked(self):
+        """
+        check if any scan is running, if not ,save data then clear all data
+        :return:
+        """
+         
+        if not self.scan_started_flag:
+            # clear figure
+            self.figure.axes.cla()
+            self.figure.draw()
+            # save data
+            scan_data = self.get_full_data()
+            self.usr_save_full_data(scan_data, save_path, usr_define=1)
+            self.clear_all_data()
+        else:
+            self.raise_warning('scan is on, can not clear')
+
+    # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************5
+    
 
     # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     """
@@ -953,7 +1013,3 @@ if __name__ == "__main__":
     win = REXSScanPlot()
     win.show()
     sys.exit(app.exec())
-    # ch1=DATAChannel('Au_REXS',address="10.30.95.167:54211",device="ADC")
-    # ch1.data.append(1)
-    # ch1.data.append(2)
-    # print(ch1.__repr__())
