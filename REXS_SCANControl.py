@@ -53,12 +53,10 @@ from Architect.Device_address import EndStationAddress
 # save path info
 FILE_PATH=os.getcwd()
 print(f'current path:{FILE_PATH}')
-save_path = os.path.join(FILE_PATH, 'save_data')
-createPath(save_path)
+save_path = createPath(os.path.join(FILE_PATH, 'save_data'))
 # sqlite database path
-SQLiteDB_path=save_path
-log_path = os.path.join(FILE_PATH, 'log_info')
-createPath(log_path)
+SQLiteDB_path=createPath(os.path.join(save_path,'database'))
+log_path = createPath(os.path.join(FILE_PATH, 'log_info'))
 
 # logger
 log_file = f'{time.strftime("%Y-%m-%d", time.localtime())}.log'
