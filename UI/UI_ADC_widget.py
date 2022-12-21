@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_ADC_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.0
+## Created by: Qt User Interface Compiler version 6.3.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(300, 239)
+        Form.resize(489, 416)
         Form.setMinimumSize(QSize(300, 230))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -117,21 +117,39 @@ class Ui_Form(object):
         self.lcdNumber.setMinimumSize(QSize(100, 40))
         self.lcdNumber.setMaximumSize(QSize(16777215, 40))
         palette1 = QPalette()
-        palette1.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        brush6 = QBrush(QColor(66, 223, 255, 255))
+        brush6 = QBrush(QColor(255, 106, 128, 255))
         brush6.setStyle(Qt.SolidPattern)
-        palette1.setBrush(QPalette.Active, QPalette.Text, brush6)
-        brush7 = QBrush(QColor(255, 85, 127, 255))
+        palette1.setBrush(QPalette.Active, QPalette.WindowText, brush6)
+        brush7 = QBrush(QColor(255, 255, 255, 255))
         brush7.setStyle(Qt.SolidPattern)
-        palette1.setBrush(QPalette.Active, QPalette.ButtonText, brush7)
-        palette1.setBrush(QPalette.Inactive, QPalette.WindowText, brush2)
-        palette1.setBrush(QPalette.Inactive, QPalette.Text, brush2)
-        palette1.setBrush(QPalette.Inactive, QPalette.ButtonText, brush2)
-        palette1.setBrush(QPalette.Disabled, QPalette.WindowText, brush4)
-        palette1.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        palette1.setBrush(QPalette.Disabled, QPalette.ButtonText, brush4)
+        palette1.setBrush(QPalette.Active, QPalette.Button, brush7)
+        palette1.setBrush(QPalette.Active, QPalette.Text, brush6)
+        palette1.setBrush(QPalette.Active, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Active, QPalette.Window, brush7)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette1.setBrush(QPalette.Active, QPalette.PlaceholderText, brush6)
+#endif
+        palette1.setBrush(QPalette.Inactive, QPalette.WindowText, brush6)
+        palette1.setBrush(QPalette.Inactive, QPalette.Button, brush7)
+        palette1.setBrush(QPalette.Inactive, QPalette.Text, brush6)
+        palette1.setBrush(QPalette.Inactive, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Inactive, QPalette.Window, brush7)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette1.setBrush(QPalette.Inactive, QPalette.PlaceholderText, brush6)
+#endif
+        palette1.setBrush(QPalette.Disabled, QPalette.WindowText, brush6)
+        palette1.setBrush(QPalette.Disabled, QPalette.Button, brush7)
+        palette1.setBrush(QPalette.Disabled, QPalette.Text, brush6)
+        palette1.setBrush(QPalette.Disabled, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Disabled, QPalette.Window, brush7)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette1.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush6)
+#endif
         self.lcdNumber.setPalette(palette1)
-        self.lcdNumber.setFrameShadow(QFrame.Plain)
+        self.lcdNumber.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
+"color: rgb(255, 106, 128);")
+        self.lcdNumber.setFrameShape(QFrame.Box)
+        self.lcdNumber.setFrameShadow(QFrame.Raised)
         self.lcdNumber.setSmallDecimalPoint(True)
         self.lcdNumber.setDigitCount(5)
         self.lcdNumber.setMode(QLCDNumber.Dec)

@@ -354,7 +354,9 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.All_monitors_dict={}
         self.All_monitor_count=0
         self.Select_endstation_cbx.currentIndexChanged['int'].connect(self.set_endstation)
-        self.set_endstation(0)
+        self.Select_instrument_cbx.currentIndexChanged['int'].connect(self.set_instrument)
+        self.set_endstation(0) # default REXS station
+        self.set_instrument(0) # default ADC
         # flag for monitoring on
         self.channel_monitor_on_flag=False
 
@@ -397,16 +399,16 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         for ch_name,pv_dict in self.scanX_channel_dict.items():
             self.Scan_Channel_cbx.addItem(ch_name)
 
-
+    @log_exceptions(log_func=logger.error)
     @Slot()
     def on_Start_Acqusition_btn_clicked(self):
         """check data channel and start acquiring data
         """
         if not self.channel_monitor_on_flag:
             try:
-                self.Full_DataChannnels={}
-                self.set_channels()
-                #print(self.Full_DataChannnels)
+                #self.Full_DataChannnels={}
+                #self.set_channels()
+                print(self.Full_DataChannnels)
                 for ch_name,daq_ch in self.Full_DataChannnels.items():
                     self.add_channel_monitor(daq_ch)
             except Exception as e:
@@ -414,40 +416,92 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 logger.error(traceback.format_exc() + str(e))
             else:
                 self.channel_monitor_on_flag=True
-    
-    def set_channels(self):
-        # ADC channels
-        for name,checkbox in self.adc_channels.items():
-            if checkbox.isChecked():
-                if name not in self.active_data_dict:
-                    self.active_data_dict[name]=[]
-                    self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
-        # pAmeter channels
-        for name,checkbox in self.pA_channels.items():
-            if checkbox.isChecked():
-                if name not in self.active_data_dict:
-                    self.active_data_dict[name]=[]
-                    self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
+
+    @Slot(int)
+    def set_instrument(self,index:int):
+        """set the instrument used to data acquisition
+        either ADC or pAmeter
+        Args:
+            index (int): index of the selected cbx
+        """
+        print(f'current index:{index}')
+        self.active_data_dict={}
+        self.Full_DataChannnels={}
+        if index==0:
+            # choose ADC
+            self.Instrument_tab.setTabEnabled(0,True)
+            self.Instrument_tab.setTabEnabled(1,False)
+            # set ADC channels
+            for name,checkbox in self.adc_channels.items():
+                if checkbox.isChecked():
+                    if name not in self.active_data_dict:
+                        print(f'add new channel {name}')
+                        self.active_data_dict[name]=[]
+                        self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+        elif index==1:
+            # choose pAmeter
+            self.Instrument_tab.setTabEnabled(1,True)
+            self.Instrument_tab.setTabEnabled(0,False)
+            # pAmeter channels
+            for name,checkbox in self.pA_channels.items():
+                if checkbox.isChecked():
+                    if name not in self.active_data_dict:
+                        print(f'add new channel {name}')
+                        self.active_data_dict[name]=[]
+                        self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
+
+    # def set_channels(self):
+    #     # ADC channels
+    #     for name,checkbox in self.adc_channels.items():
+    #         if checkbox.isChecked():
+    #             if name not in self.active_data_dict:
+    #                 self.active_data_dict[name]=[]
+    #                 self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+    #     # pAmeter channels
+    #     for name,checkbox in self.pA_channels.items():
+    #         if checkbox.isChecked():
+    #             if name not in self.active_data_dict:
+    #                 self.active_data_dict[name]=[]
+    #                 self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
+
+    # def add_channel_monitor(self,daq_ch:DATAChannel):
+    #     """add one channel monitor 
+
+    #     Args:
+    #         daq_ch (DATAChannel): provide a DATAChannel 
+    #     """             
+    #     if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
+    #         # adc address=(host,port,channel,ul_range_n)
+    #         #print(daq_ch.address[2],daq_ch.name)
+    #         self.All_monitor_count+=1
+    #         self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
+    #         board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
+    #         self.Monitor_MDI.addSubWindow(self.All_monitors_dict[daq_ch.name])
+    #         self.All_monitors_dict[daq_ch.name].show()
+    #         self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
+    #         self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
+    #         #start the monitor
+    #         self.All_monitors_dict[daq_ch.name].start_monitor()
 
     def add_channel_monitor(self,daq_ch:DATAChannel):
-        """add one channel monitor 
+        """add one channel monitor to tab widget
 
         Args:
             daq_ch (DATAChannel): provide a DATAChannel 
-        """             
+        """
         if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
-            # adc address=(host,port,channel,ul_range_n)
-            #print(daq_ch.address[2],daq_ch.name)
             self.All_monitor_count+=1
             self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
             board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
-            self.Monitor_MDI.addSubWindow(self.All_monitors_dict[daq_ch.name])
+            self.Monitor_Tab.insertTab(0,self.All_monitors_dict[daq_ch.name],daq_ch.name)
             self.All_monitors_dict[daq_ch.name].show()
             self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
             #start the monitor
             self.All_monitors_dict[daq_ch.name].start_monitor()
-    
+
+
+
     @Slot(str,float)
     def get_channel_data(self,ch_name:str,value:float):
         #print(f'channel: {ch_name} get a new value: {value}')
