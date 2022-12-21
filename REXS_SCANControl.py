@@ -48,6 +48,8 @@ from UI.SQLDataViewPlot import ViewSQLiteData
 from UI.UI_REXS_SCAN import Ui_MainWindow
 # ADC monitor
 from UI.ADC_Widget import ADCMonitor
+# pAmeter monitor
+from UI.pAmeter6517B_Widget import pAMeterMonitor
 # device address
 from Architect.Device_address import EndStationAddress
 # save path info
@@ -76,7 +78,7 @@ full_data = {'BPM-X pos(um)': self._plot_X_list, 'BPM-Z pos(um)': self._plot_Z_l
     Returns:
         _type_: _description_
 """
-ChannelDATA=namedtuple('ChannelDATA',field_names=["Name","Address","Device"])
+#ChannelDATA=namedtuple('ChannelDATA',field_names=["Name","Address","Device"])
 
 
 class DATAChannel(object):
@@ -499,6 +501,17 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
             #start the monitor
             self.All_monitors_dict[daq_ch.name].start_monitor()
+        elif daq_ch.device=="pAmeter" and daq_ch.name not in self.All_monitors_dict:
+            self.All_monitor_count+=1
+            self.All_monitors_dict[daq_ch.name]=pAMeterMonitor(pAname=daq_ch.name,address=daq_ch.address,points=5,full_time=10000,
+            keep_on=1,nplc=1)
+            self.Monitor_Tab.insertTab(0,self.All_monitors_dict[daq_ch.name],daq_ch.name)
+            self.All_monitors_dict[daq_ch.name].show()
+            self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
+            self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
+            #start the monitor
+            self.All_monitors_dict[daq_ch.name].start_monitor()
+
 
 
 

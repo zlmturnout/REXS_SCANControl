@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>307</height>
+    <width>359</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -443,7 +443,7 @@ color: rgb(255, 106, 128);</string>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="Unit_label">
+        <widget class="QLabel" name="Current_label">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -815,7 +815,7 @@ color: rgb(255, 106, 128);</string>
              <widget class="QComboBox" name="NPLC_cbx">
               <property name="minimumSize">
                <size>
-                <width>80</width>
+                <width>95</width>
                 <height>40</height>
                </size>
               </property>
@@ -883,27 +883,27 @@ color: rgb(255, 106, 128);</string>
               </property>
               <item>
                <property name="text">
-                <string>0.01</string>
+                <string>Fastest</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>0.1</string>
+                <string>fast</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>1</string>
+                <string>normal</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>5</string>
+                <string>slow</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>10</string>
+                <string>slowest</string>
                </property>
               </item>
              </widget>

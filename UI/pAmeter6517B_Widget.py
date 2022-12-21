@@ -6,12 +6,10 @@ from PySide6.QtGui import QIcon,QAction,QPixmap,QPainter,QColor,QFont
 from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import QWidget, QPushButton, QStyle, QFileDialog, QApplication, QMainWindow, QGridLayout, \
     QMessageBox
-# import MCCDAQ lib mcculw
-from mcculw import ul
-from mcculw.enums import ULRange, InterfaceType
-from mcculw.ul import ULError, get_net_device_descriptor, create_daq_device
-from mcculw.device_info import DaqDeviceInfo
+from socket import *
 sys.path.append('.')
+# SCIP cmd for pA6517B
+from Architect.SCIP_CMD_6517B import *
 # data save part
 from resource.Dict_DataFrame_Sqlite import dict_to_csv,dict_to_excel,dict_to_json,dict_to_SQLTable
 from resource.Tools_functions import createPath,get_datetime
@@ -28,112 +26,338 @@ SQLiteDB_path=createPath(os.path.join(save_path,'database'))
 #today_folder=createPath(os.path.join(save_path,time.strftime('%Y-%m-%d', time.localtime())))
 
 # UI import
-from UI_ADC_widget import Ui_Form
+from UI_pAmeter_widget import Ui_Form
 
-# QThread to read data from DAQ E-1608
-class E1608QThread(QThread):
+HOST = '10.30.95.170'
+Port_list = [23, 26, 29, 32]  # port in USR_N540,26 is for keithley 6517B
+BUFSIZ = 1024
+NPLC_list=[0.01,0.1,1,5,10] # nplc for pAmeter read speed
+
+"""
+worker Qthread for reading current[aA~mA] from Keithley 6517B electrometer
+"""
+# basic logic to measure current by Keithley 6517b
+# *CLS (clear status)
+cmd_cls = '*CLS'
+# reset 6517B
+cmd_RST = '*RST'
+# zero check status
+cmd_zch = ':SYSTem:ZCHeck?'  # 0 is OFF , 1 is ON
+# configure measure current
+cmd_config_CURR = ':CONFigure:CURR:DC'
+# set filter type=advance mode=average  counts=5  noise=1% and median OFF
+cmd_curr_aver = ':SENS:CURR:AVERage:TCONtrol?'
+# initiate continues on
+cmd_initiate = ':INITiate'  # take the Model 6517B out of the idle state wait 1s
+# return a new value
+cmd_get_newval = ':SENS:DATA:FRESh?'
+# data type [re.fullmatch(r'([+\-0-9E.]+)[A-Z]{4}', result[0])]
+test_data = '+198.4891E-12NADC,+0007633.858813secs,+58454RDNG#\r\n'
+
+
+class Keithley6517BCom(QThread):
     """
-    Work QThread to read data from ADC type MCC E-1608
-    """
+        worker Qthread for communicating with Keithley 6517B electrometer,using serial port
+        emit signal current data when complete:[average,all currents,info]
+        function:read currents implemented
+        """
     data_sig = Signal(list)
 
-    def __init__(self, channel: int = 0, ul_range_n: int = 3, repeat_n: int = 1, t_interval: float = 0.1,
-                 board_num:int=0,keep_on: int = 0, host='10.30.95.167',port = 54211):
-        """
-        read the output signal from channel,and repeat n times for average,time_interval 0.1s
-        :param channel:
-        :param repeat_n:
-        :param t_interval:
-        """
-        #QThread.__init__(self)
-        super().__init__()
-        self.channel = channel
-        self.repeat_n = repeat_n
-        self.t_interval = t_interval
-        self.t_ms = int(self.t_interval * 1000)
-        self.host = host
-        self.port = port
-        self.board_num = board_num
-        self.ul_range_list = [ULRange.BIP1VOLTS, ULRange.BIP2VOLTS, ULRange.BIP5VOLTS, ULRange.BIP10VOLTS]
-        self.UL_range = self.ul_range_list[ul_range_n]
-        ul.ignore_instacal()
+    def __init__(self, address: tuple, func: str, points: int = 5, delay: float = 0.1, full_time: float = 1000,
+                 keep_on: int = 0, nplc: int = 1,
+                 parent=None):
+        #QThread.__init__(self, parent)
+        super(Keithley6517BCom, self).__init__(parent)
+        self.address = address
+        self.func = func
+        self.points = points
+        self.delay = delay
+        self.nplc = nplc
+        self.monitor_time = full_time  # monitor for 1000s
         self.run_flag = True
-        # 0 is run once, 1 is keep on monitoring until runtime runs out.
-        self.keep_on = keep_on
-        self.__ini_device()
+        self._keep_on = keep_on
+        print(f'keep on =={keep_on}')
+        self.response_msg = ''
+        self.initiate_state_flag=False # pAmeter has initiate(True) or not(False)
+        self.current_nplc(nplc=self.nplc)
 
     def __del__(self):
-        self.keep_on = 0
-        self._run_flag=False
-    
-    def __ini_device(self):
-        try:
-            self.device = get_net_device_descriptor(self.host, self.port, 5)
-            create_daq_device(self.board_num, self.device)
-        except Exception as e:
-            print(traceback.format_exc()+str(e))
-            self.run_flag = False
-        else:
-            self.run_flag = True
+        self.run_flag = False
 
+    def cmd_send(self, cmd: str, wait: int = 100, receive_flag=True):
+        """
+        send cmd to the keithley address, get the response and return
+        start tcp client,set up connection to the sever USR_N540,
+        send msg and return when get response message
+        :param receive_flag: if true receive and return, else wait and return NONE
+        :param wait: wait [100]ms before the cmd is write
+        :param cmd:
+        :return:
+        """
+        self.send_msg = (cmd + '\r\n').encode('utf-8')
+        self.socket_TCP = socket(AF_INET, SOCK_STREAM)
+        self.socket_TCP.settimeout(2.0)  # set timeout
+        try:
+            self.socket_TCP.connect(self.address)
+        except Exception as e:
+            error_info = traceback.format_exc()
+            print(error_info)
+        else:
+            self.connect_flag = True
+            self.socket_TCP.send(self.send_msg)
+            self.msleep(wait)
+            t_start = time.time()
+            while self.connect_flag and receive_flag and time.time() - t_start < 10:
+                resp = self.socket_TCP.recv(BUFSIZ)
+                if resp:
+                    self.response_msg = resp.decode('utf-8')
+                    # print(f'response:{self.response_msg} from address:{self.address}')
+                    break
+        finally:
+            # self.connect_flag = True
+            self.socket_TCP.close()
+            return self.response_msg
+
+    @property
+    def deviceID(self):
+        deviceID = self.cmd_send(cmd_ID)
+        return deviceID
+
+    @property
+    def version(self):
+        return self.cmd_send(cmd_version)
+
+    def reset(self):
+        self.cmd_send(cmd_RST, wait=1000, receive_flag=False)
+
+    def clear_status(self):
+        self.cmd_send(cmd_cls, wait=1000, receive_flag=False)
+
+    def zero_check(self, status: str = 'ON'):
+        """
+        set zero check mode, OFF is off, ON is on
+        :param status:
+        :return:
+        """
+        if status == 'ON':
+            self.cmd_send(cmd_zch_on, receive_flag=False)
+        elif status == 'OFF':
+            self.cmd_send(cmd_zch_off, receive_flag=False)
+
+    def configure_current(self, AutoRange: int = 1, Range: float = 0.01, nplc: float = 1, Digits: int = 7):
+        """
+        :SENS:FUNC 'CURR'
+        configure measure current
+        :param AutoRange: auto range 0 is off,1 is on
+        :param Range: 0-21e-3 A
+        :param nplc: 0.01,1,10, fast,median,low
+        :param Digits: add [val]:4=3.5,5=4.5, 6=5.5, 7=6.5,
+        :return:
+        """
+        cmd_setRange = ''
+        if AutoRange == 1:
+            cmd_setRange = cmd_curr_AutoRange + str(AutoRange)
+        elif AutoRange == 0:
+            cmd_setRange = cmd_curr_AutoRange + str(AutoRange) + ';' + cmd_curr_RangeSet + str(Range)
+        cmd = cmd_sens_curr + ';' + cmd_setRange + ';' + cmd_curr_dig + str(
+            Digits) + ';'
+        self.cmd_send(cmd, wait=300, receive_flag=False)
+
+    def current_nplc(self,nplc):
+        """
+
+        set the nplc for current measurement 0.01,1,10=Fastest,Normal,Slowest
+        :param nplc:
+        :return:
+        """
+        cmd=cmd_curr_nplc + str(nplc)
+        wait = 1000 if self.nplc == 10 else 2000
+        self.cmd_send(cmd, wait=wait, receive_flag=False)
+
+    def current_filter(self, useFilter=True, FilterType='ADV', AverConTr='REP'):
+        """
+        configure the current filter,
+        :param useFilter: True:ON,False:OFF
+        :param FilterType: SCALar or ADVanced
+        :param AverConTr: REPeat or MOVing
+        :param averCount: average over 1-100
+        :param Noise: +/- [val]% val:1-100
+        :param MediaMode: True is On, False is OFF
+        :return:
+        """
+        cmd_filter = cmd_curr_filterON if useFilter else cmd_curr_filterOFF
+        cmd_FilterType = cmd_curr_aver_typeADV if FilterType == 'ADV' else cmd_curr_aver_typeSCAL
+        cmd_AverConTr = cmd_curr_averREP if AverConTr == 'REP' else cmd_curr_averMOV
+        #cmd_curr_aver_noiseToL = cmd_curr_aver_Noise_N + str(Noise)
+        # write the cmd
+        self.cmd_send(cmd_filter,wait=500,receive_flag=False)
+        cmd =cmd_FilterType + ';' + cmd_AverConTr + ';'
+        print(cmd)
+        self.cmd_send(cmd, wait=500, receive_flag=False)
+        # remove filter
+        self.cmd_send(cmd_curr_filterOFF,wait=200,receive_flag=False)
+
+    def curr_medianMode(self,MediaMode=False):
+        """
+        cmd=SENS:CURRent:median:STATe ON/OFF
+        medianMode On or OFF
+        :return:
+        """
+        cmd_curr_medianMode = cmd_curr_medianON if MediaMode else cmd_curr_medianOFF
+        self.cmd_send(cmd_curr_medianMode,wait=200,receive_flag=False)
+
+
+    def curr_aver_counts(self, num: int = 5):
+        """
+        cmd=:SENS:CURR:AVERage:Count [num]
+        set the average num in filter
+        :param num:
+        :param counts:
+        :return:
+        """
+        cmd = cmd_curr_aver_Num + str(num)
+        self.cmd_send(cmd, wait=100, receive_flag=False)
+
+    def initiate(self):
+        """
+        cmd=:INITiate
+        take the Model 6517B out of the idle state
+        :return:
+        """
+        self.cmd_send(cmd_initiate, wait=100, receive_flag=False)
+
+    def initiate_continuous(self, continu=True):
+        """
+        cmd=:INITiate:CONTinuous ON/OFF
+        Enable/Disable continuous initiation
+        True=Enable,False=Disable
+        :param continu:
+        :return:
+        """
+        cmd = cmd_ini_continuON if continu else cmd_ini_continuOFF
+        self.cmd_send(cmd, wait=100, receive_flag=False)
+
+    # configure measure function
+    def conf_function(self, func='current'):
+        """
+        function:CURRent[:DC]: Amps function
+                RESistance: Ohms function
+                CHARge: Coulombs function
+                VOLTage[:DC]:default voltage
+        :return:
+        """
+        if func == 'current':
+            cmd_conf_func = ':CONFigure:CURRent:DC;'
+        elif func == 'resistance':
+            cmd_conf_func = ':CONFigure:RESistance;'
+        elif func == 'charge':
+            cmd_conf_func = ':CONFigure:CHARge;'
+        else:
+            cmd_conf_func = ':CONFigure:VOLTage:DC;'
+        self.cmd_send(cmd_conf_func, wait=100, receive_flag=False)
+
+    # common cmd for measurement
+    # Signal-oriented measurement commands
+    def fetch(self, wait: int = 100):
+        """
+        cmd=:FETCH?
+        Requests the latest reading
+        :return:
+        """
+        result = self.cmd_send(cmd_fetch, wait=wait, receive_flag=True)
+        return result
+
+    def _MEAs(self, wait: int = 100):
+        """
+        Performs an :ABORt, :CONFigure:<function>, and a :READ?
+        NOT recommended
+        :return:
+        """
+        return self.cmd_send(cmd_mea, wait=wait, receive_flag=True)
+
+    def read_data(self, wait: int = 100):
+        """
+        Performs an :ABORt, :INITiate, and a :FETCh?
+        :return:
+        """
+        return self.cmd_send(cmd_read, wait=wait, receive_flag=True)
+
+    def fresh_data(self, wait: int = 100):
+        """
+        cmd=:SENS:DATA:FRESh?
+        get a new value from readings
+        :return:
+        """
+        return self.cmd_send(cmd_get_newval, wait=wait, receive_flag=True)
+
+    @staticmethod
+    def get_value(resp: str):
+        """
+        test_data='+198.4891E-12NADC,+0007633.858813secs,+58454RDNG#\r\n'
+        :param resp:
+        :return:0 if wrong, else currents  in Amps
+        """
+        data_value = 0
+        if resp:
+            # val = re.fullmatch(r'([+\-0-9E.]+)[A-Z]{4}', resp.split(',')[0])
+            # data_value = float(val.group(1))
+            val=resp.split(',')[0].split('NADC')
+            data_value = float(val[0])
+        print(f'get new read:{data_value}A')
+        return data_value
 
     def run(self):
+        print(self.func)
         t0 = time.time()
-        run_time = 3600
-        while self.run_flag and time.time() - t0 < run_time:
-            read_value = []
-            sum_value = 0
-            try:
-                i = 0
-                while i < self.repeat_n:
-                    self.msleep(self.t_ms)
-                    # Get a value from the device
-                    # Use the a_in method for devices with a resolution <= 16
-                    value = ul.a_in(self.board_num, self.channel, self.UL_range)
-                    # Convert the raw value to engineering units
-                    eng_units_value = ul.to_eng_units(self.board_num, self.UL_range, value)
-                    read_value.append(eng_units_value)
-                    sum_value += eng_units_value
-                    i += 1
-            except Exception as e:
-                print(e)
-            finally:
-                average_value = float('{:.3f}'.format(sum_value / self.repeat_n))
-                # emit list form [[x,x,x,x,x],average]
-                all_read = read_value
-                self.data_sig.emit([all_read, average_value])
-                #print(f'emit data info: {[all_read, average_value]}')
-                self.msleep(100)
-                if self.keep_on == 0:
-                    print('set run flag to False')
-                    ul.release_daq_device(self.board_num)
+        status = 'OK'
+        pA_currents=0
+        # measure current
+        if self.func == 'currents':
+            if not self.initiate_state_flag:
+                self.current_nplc(nplc=self.nplc)
+                self.curr_aver_counts(num=self.points)
+                self.zero_check(status='OFF')
+                self.initiate_state_flag=True
+            while self.run_flag and time.time() - t0 < self.monitor_time:
+                try:
+                    resp = self.fresh_data()
+                    pA_currents = self.get_value(resp)
+                    status = 'error' if pA_currents == 0 else 'OK'
+                except Exception as e:
+                    error_info = traceback.format_exc()
+                    print(error_info+str(e))
+                finally:
+                    #print(f'start emit:{[pA_currents, pA_currents, status]}')
+                    self.data_sig.emit([pA_currents, pA_currents, status])
+                if self._keep_on == 0:
                     self.run_flag = False
+    
+    def __del__(self):
+        self._keep_on = 0
+        self.run_flag=False
 
-
-class ADCMonitor(QWidget,Ui_Form):
-    """Monitor ADC read ,plot the data by time
-    emit data if neded
+class pAMeterMonitor(QWidget,Ui_Form):
+    """Monitor pAmeter read ,plot the data by time
+    emit data if required
 
     example:
     """
     emit_data_sig=Signal(str,float)
     close_sig=Signal(str)
 
-    def __init__(self, parent =None, ADCname:str=None,host:str='10.30.95.167',port:int=54211,
-        board_num:int=0,channel: int = 0, ul_range_n: int = 3, repeat_n: int = 1, t_interval: float = 0.1,keep_on: int = 0,emit_data=True) -> None:
-        super(ADCMonitor,self).__init__()
+    def __init__(self, parent =None, pAname:str=None,address:tuple=('10.30.95.167',54211),
+        func: str='currents', points: int = 5, delay: float = 0.1, full_time: float = 10000,keep_on: int = 0, nplc: int = 1,emit_data:bool=True) -> None:
+        super(pAMeterMonitor,self).__init__()
         self.setupUi(self)
-        self.setWindowTitle(f'{ADCname} Monitor ')
-        self.adc_name=ADCname
-        self.Device_label.setText(ADCname)
-        self.host=host
-        self.port=port
-        self.channel=channel
-        self.board_num=board_num
-        self.ul_range_num=ul_range_n
-        self.repeat_n=repeat_n
-        self.t_interval=t_interval
-        ul.ignore_instacal()
+        self.setWindowTitle(f'{pAname} Monitor ')
+        self.pA_name= pAname
+        self.Device_label.setText(pAname)
+        self.address=address
+        self.func=func
+        self.points=points
+        self.delay=delay
+        self.full_time=full_time
+        self.nplc=nplc
         self.run_flag = True
         # 0 is run once, 1 is keep on monitoring until runtime runs out.
         self.keep_on = keep_on
@@ -141,10 +365,12 @@ class ADCMonitor(QWidget,Ui_Form):
         self.__ini_monitor()
         self.__init__matplotlib()
         self.__init__datasave()
-        self.Channel_cbx.currentIndexChanged['int'].connect(self.set_channel)
-        self.Range_cbx.currentIndexChanged['int'].connect(self.set_ulRange)
-        self.Channel_cbx.setCurrentIndex(self.channel)
-        self.Range_cbx.setCurrentIndex(self.ul_range_num)
+        #self.Channel_cbx.currentIndexChanged['int'].connect(self.set_channel)
+        #self.Range_cbx.currentIndexChanged['int'].connect(self.set_ulRange)
+        self.ZCHK_rbtn.toggled["bool"].connect(self.zero_check)
+        self.NPLC_cbx.currentIndexChanged['int'].connect(self.set_nplc)
+        #self.Channel_cbx.setCurrentIndex(self.channel)
+        self.NPLC_cbx.setCurrentIndex(NPLC_list.index(self.nplc))
 
 
 # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
@@ -181,19 +407,27 @@ class ADCMonitor(QWidget,Ui_Form):
 
 # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
     #  start of UL_range and channel set part
-    @Slot(int)
-    def set_channel(self,ch_num:int):
-        self.channel=ch_num
+    @Slot(bool)
+    def zero_check(self,checked:bool):
+        print(f'zero check:{checked}')
+        if self.monitor_on_flag and checked:
+            #stop monitor
+            self.monitor_on_flag=False
+            self._DaqQthread.__del__()
+            self._DaqQthread.initiate_state_flag=False
+            self._DaqQthread.zero_check("ON")
 
     @Slot(int)
-    def set_ulRange(self,ul_num:int):
-        """set the volts range of adc device
-        UL_range=[ULRange.BIP1VOLTS, ULRange.BIP2VOLTS, ULRange.BIP5VOLTS, ULRange.BIP10VOLTS]
-        self.UL_range = self.ul_range_list[ul_range_n]
+    def set_nplc(self,index:int):
+        """set the nplc of pA meter
+        nplc=[0.01,0.1,1,5,10] means fasteses->slowest
+
         Args:
-            uL_num (int): _description_
+            index (int): 
         """
-        self.ul_range_num = ul_num
+        nplc=NPLC_list[self.NPLC_cbx.currentIndex()]
+        print(f'current nplc: {nplc}')
+        self.nplc=nplc
 
     #  end of UL_range and channel set part
 # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
@@ -224,11 +458,10 @@ class ADCMonitor(QWidget,Ui_Form):
         self.time_list=[]
         self.timestamp_list=[]
         if not self.monitor_on_flag:
-            print(self.ul_range_num)
             self.start_time=time.time()
             try:
-                self._DaqQthread=E1608QThread(channel=self.channel,ul_range_n=self.ul_range_num,host=self.host,
-                    port=self.port,board_num=self.board_num,keep_on=1,repeat_n=self.repeat_n,t_interval=self.t_interval)
+                self._DaqQthread=Keithley6517BCom(address=self.address,func=self.func,points=self.points,delay=self.delay,
+                full_time=self.full_time,keep_on=self.keep_on,nplc=self.nplc)
                 self._DaqQthread.data_sig.connect(self.get_ReadValue)
                 self._DaqQthread.start()
             except Exception as e:
@@ -247,17 +480,43 @@ class ADCMonitor(QWidget,Ui_Form):
             self.Details_btn.setText(">--<")
             self.hide_details_flag=True
 
+    def lcd_display(self,current:'int|float'):
+        """display current by uA, nA or pA
+
+        Args:
+            current (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        lcd_value=-1.0
+        if current*1.0e6>=1:
+            # > 1uA
+            lcd_value=current*1.0e6
+            self.Current_label.setText('uA')
+        elif current*1.0e6<1 and current*1.0e9>=1:
+            # 1nA~1uA
+            lcd_value=current*1.0e9
+            self.Current_label.setText('nA')
+        else:
+            # < 1nA
+            lcd_value=current*1.0e12
+            self.Current_label.setText('pA')
+        self.lcd_pA.display(lcd_value)
+
+
     @Slot(list)
     def get_ReadValue(self,read_list:list):
         """_summary_
 
         Args:
-            data_list (list): Form:[[x1,x2,x3,x4],x]=[all_read, average_value]
+            data_list (list): Form:[pA_currents, pA_currents, status] 
+            status='error'|'OK'
         """
         self.monitor_on_flag=True 
-        if isinstance(read_list[-1],float):
-            new_value=read_list[-1]
-            self.lcdNumber.display(new_value)
+        if read_list[-1]=='OK':
+            new_value=read_list[0]
+            self.lcd_display(new_value)
             t_elapse=time.time()-self.start_time
             self.data_list.append(new_value)
             self.time_list.append(t_elapse)
@@ -265,7 +524,7 @@ class ADCMonitor(QWidget,Ui_Form):
             self.timestamp_list.append(timestamp)
             # decide wether emit data  or not
             if self.emit_data:
-                self.emit_data_sig.emit(self.adc_name,new_value)
+                self.emit_data_sig.emit(self.pA_name,new_value)
             # plot the data verus time
             max_length=200
             if len(self.data_list)>max_length:
@@ -276,7 +535,8 @@ class ADCMonitor(QWidget,Ui_Form):
                 time_list=self.time_list
             
             # plot the changes
-            self.plot_read_data(x_list=time_list,y_list=data_list,x_name='time',y_name='volts(V)')
+            self.plot_read_data(x_list=time_list,y_list=data_list,x_name='time/s',y_name='currents(pA)')
+
 
     @Slot()
     def on_Stop_monitor_btn_clicked(self):
@@ -284,6 +544,7 @@ class ADCMonitor(QWidget,Ui_Form):
         if self.monitor_on_flag:
             self.monitor_on_flag=False
             self._DaqQthread.__del__()
+            self._DaqQthread.initiate_state_flag=False
     
     #  end of action and data-acquisition-plot part
 # **************************************LIMIN_Zhou_at_SSRF_BL20U**************************************
@@ -312,10 +573,10 @@ class ADCMonitor(QWidget,Ui_Form):
          self.datasave_num+=1
          all_valid_data = self.get_full_data()
          cur_datetime=time.strftime("%Y-%m-%d-%H-%M", time.localtime())
-         save_header=self.adc_name.replace(":","_")
+         save_header=self.pA_name.replace(":","_")
          filename=f'{save_header}-{cur_datetime}N{self.datasave_num}'
          today_folder=createPath(os.path.join(save_path,time.strftime('%Y-%m-%d', time.localtime())))
-         routine_folder=createPath(os.path.join(today_folder,"ADCMonitorData"))
+         routine_folder=createPath(os.path.join(today_folder,"pAMonitorMonitorData"))
          self.save_all_data(all_valid_data,routine_folder,filename,filetype=('excel',"sqlite"))
         
     def get_full_data(self):
@@ -395,13 +656,13 @@ class ADCMonitor(QWidget,Ui_Form):
             #event.accept()
         else:
             event.accept()
-            self.close_sig.emit(self.adc_name)
+            self.close_sig.emit(self.pA_name)
             
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = ADCMonitor(ADCname="REXS_Au",host='10.30.95.167',port=54211,
-        board_num=0,channel= 0, ul_range_n= 0)
+    win = pAMeterMonitor(pAname="REXS_Au",address=('10.30.95.163',26),func='currents', points= 5, delay= 0.1, 
+        full_time = 10000,keep_on = 0, nplc= 1,emit_data=True)
     win.show()
     sys.exit(app.exec())
         

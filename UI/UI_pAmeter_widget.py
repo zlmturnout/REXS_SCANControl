@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_pAmeter_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,7 +24,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(320, 307)
+        Form.resize(359, 358)
         Form.setMinimumSize(QSize(300, 300))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -158,12 +158,12 @@ class Ui_Form(object):
 
         self.horizontalLayout_3.addWidget(self.lcdNumber)
 
-        self.Unit_label = QLabel(Form)
-        self.Unit_label.setObjectName(u"Unit_label")
-        sizePolicy1.setHeightForWidth(self.Unit_label.sizePolicy().hasHeightForWidth())
-        self.Unit_label.setSizePolicy(sizePolicy1)
-        self.Unit_label.setMinimumSize(QSize(40, 40))
-        self.Unit_label.setMaximumSize(QSize(3160, 40))
+        self.Current_label = QLabel(Form)
+        self.Current_label.setObjectName(u"Current_label")
+        sizePolicy1.setHeightForWidth(self.Current_label.sizePolicy().hasHeightForWidth())
+        self.Current_label.setSizePolicy(sizePolicy1)
+        self.Current_label.setMinimumSize(QSize(40, 40))
+        self.Current_label.setMaximumSize(QSize(3160, 40))
         palette2 = QPalette()
         palette2.setBrush(QPalette.Active, QPalette.WindowText, brush)
         palette2.setBrush(QPalette.Active, QPalette.Text, brush)
@@ -189,11 +189,11 @@ class Ui_Form(object):
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette2.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush10)
 #endif
-        self.Unit_label.setPalette(palette2)
-        self.Unit_label.setFont(font1)
-        self.Unit_label.setAlignment(Qt.AlignCenter)
+        self.Current_label.setPalette(palette2)
+        self.Current_label.setFont(font1)
+        self.Current_label.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_3.addWidget(self.Unit_label)
+        self.horizontalLayout_3.addWidget(self.Current_label)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
@@ -261,7 +261,7 @@ class Ui_Form(object):
         self.NPLC_cbx.addItem("")
         self.NPLC_cbx.addItem("")
         self.NPLC_cbx.setObjectName(u"NPLC_cbx")
-        self.NPLC_cbx.setMinimumSize(QSize(80, 40))
+        self.NPLC_cbx.setMinimumSize(QSize(95, 40))
         self.NPLC_cbx.setMaximumSize(QSize(120, 40))
         palette5 = QPalette()
         palette5.setBrush(QPalette.Active, QPalette.Text, brush11)
@@ -356,15 +356,15 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.Details_btn.setText(QCoreApplication.translate("Form", u">--<", None))
         self.Device_label.setText(QCoreApplication.translate("Form", u"Device name", None))
-        self.Unit_label.setText(QCoreApplication.translate("Form", u"pA", None))
+        self.Current_label.setText(QCoreApplication.translate("Form", u"pA", None))
         self.Details_box.setTitle(QCoreApplication.translate("Form", u"ControlPannel", None))
         self.ZCHK_rbtn.setText(QCoreApplication.translate("Form", u"ZeroCheck", None))
         self.Unit_label_2.setText(QCoreApplication.translate("Form", u"Speed:", None))
-        self.NPLC_cbx.setItemText(0, QCoreApplication.translate("Form", u"0.01", None))
-        self.NPLC_cbx.setItemText(1, QCoreApplication.translate("Form", u"0.1", None))
-        self.NPLC_cbx.setItemText(2, QCoreApplication.translate("Form", u"1", None))
-        self.NPLC_cbx.setItemText(3, QCoreApplication.translate("Form", u"5", None))
-        self.NPLC_cbx.setItemText(4, QCoreApplication.translate("Form", u"10", None))
+        self.NPLC_cbx.setItemText(0, QCoreApplication.translate("Form", u"Fastest", None))
+        self.NPLC_cbx.setItemText(1, QCoreApplication.translate("Form", u"fast", None))
+        self.NPLC_cbx.setItemText(2, QCoreApplication.translate("Form", u"normal", None))
+        self.NPLC_cbx.setItemText(3, QCoreApplication.translate("Form", u"slow", None))
+        self.NPLC_cbx.setItemText(4, QCoreApplication.translate("Form", u"slowest", None))
 
 #if QT_CONFIG(tooltip)
         self.NPLC_cbx.setToolTip(QCoreApplication.translate("Form", u"set ADC volts", None))

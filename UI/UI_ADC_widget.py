@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_ADC_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(489, 416)
+        Form.resize(300, 235)
         Form.setMinimumSize(QSize(300, 230))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -157,6 +157,43 @@ class Ui_Form(object):
 
         self.horizontalLayout_3.addWidget(self.lcdNumber)
 
+        self.Voltage_label = QLabel(Form)
+        self.Voltage_label.setObjectName(u"Voltage_label")
+        sizePolicy1.setHeightForWidth(self.Voltage_label.sizePolicy().hasHeightForWidth())
+        self.Voltage_label.setSizePolicy(sizePolicy1)
+        self.Voltage_label.setMinimumSize(QSize(40, 40))
+        self.Voltage_label.setMaximumSize(QSize(3160, 40))
+        palette2 = QPalette()
+        palette2.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        palette2.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette2.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+        brush8 = QBrush(QColor(255, 85, 0, 128))
+        brush8.setStyle(Qt.NoBrush)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette2.setBrush(QPalette.Active, QPalette.PlaceholderText, brush8)
+#endif
+        palette2.setBrush(QPalette.Inactive, QPalette.WindowText, brush2)
+        palette2.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette2.setBrush(QPalette.Inactive, QPalette.ButtonText, brush2)
+        brush9 = QBrush(QColor(255, 85, 0, 128))
+        brush9.setStyle(Qt.NoBrush)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette2.setBrush(QPalette.Inactive, QPalette.PlaceholderText, brush9)
+#endif
+        palette2.setBrush(QPalette.Disabled, QPalette.WindowText, brush4)
+        palette2.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        palette2.setBrush(QPalette.Disabled, QPalette.ButtonText, brush4)
+        brush10 = QBrush(QColor(255, 85, 0, 128))
+        brush10.setStyle(Qt.NoBrush)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette2.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush10)
+#endif
+        self.Voltage_label.setPalette(palette2)
+        self.Voltage_label.setFont(font1)
+        self.Voltage_label.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_3.addWidget(self.Voltage_label)
+
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
@@ -176,13 +213,13 @@ class Ui_Form(object):
         self.Channel_cbx.setObjectName(u"Channel_cbx")
         self.Channel_cbx.setMinimumSize(QSize(120, 40))
         self.Channel_cbx.setMaximumSize(QSize(120, 40))
-        palette2 = QPalette()
-        brush8 = QBrush(QColor(0, 170, 255, 255))
-        brush8.setStyle(Qt.SolidPattern)
-        palette2.setBrush(QPalette.Active, QPalette.Text, brush8)
-        palette2.setBrush(QPalette.Inactive, QPalette.Text, brush2)
-        palette2.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        self.Channel_cbx.setPalette(palette2)
+        palette3 = QPalette()
+        brush11 = QBrush(QColor(0, 170, 255, 255))
+        brush11.setStyle(Qt.SolidPattern)
+        palette3.setBrush(QPalette.Active, QPalette.Text, brush11)
+        palette3.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette3.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        self.Channel_cbx.setPalette(palette3)
         font2 = QFont()
         font2.setFamilies([u"Arial"])
         font2.setPointSize(16)
@@ -200,11 +237,11 @@ class Ui_Form(object):
         self.Range_cbx.setObjectName(u"Range_cbx")
         self.Range_cbx.setMinimumSize(QSize(120, 40))
         self.Range_cbx.setMaximumSize(QSize(120, 40))
-        palette3 = QPalette()
-        palette3.setBrush(QPalette.Active, QPalette.Text, brush8)
-        palette3.setBrush(QPalette.Inactive, QPalette.Text, brush2)
-        palette3.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        self.Range_cbx.setPalette(palette3)
+        palette4 = QPalette()
+        palette4.setBrush(QPalette.Active, QPalette.Text, brush11)
+        palette4.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette4.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        self.Range_cbx.setPalette(palette4)
         self.Range_cbx.setFont(font1)
         self.Range_cbx.setToolTipDuration(5000)
         self.Range_cbx.setEditable(False)
@@ -293,6 +330,7 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.Details_btn.setText(QCoreApplication.translate("Form", u">--<", None))
         self.Device_label.setText(QCoreApplication.translate("Form", u"Device name", None))
+        self.Voltage_label.setText(QCoreApplication.translate("Form", u"V", None))
         self.Details_box.setTitle(QCoreApplication.translate("Form", u"ControlPannel", None))
         self.Channel_cbx.setItemText(0, QCoreApplication.translate("Form", u"CH0", None))
         self.Channel_cbx.setItemText(1, QCoreApplication.translate("Form", u"CH1", None))
