@@ -199,7 +199,7 @@ class Ui_Form(object):
         font1.setPointSize(14)
         font1.setBold(True)
         self.Time_stamp_label.setFont(font1)
-        self.Time_stamp_label.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.Time_stamp_label.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout.addWidget(self.Time_stamp_label)
 

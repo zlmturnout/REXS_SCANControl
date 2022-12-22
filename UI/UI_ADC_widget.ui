@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>235</height>
+    <width>592</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -591,7 +591,7 @@ color: rgb(255, 106, 128);</string>
           <string>V</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>

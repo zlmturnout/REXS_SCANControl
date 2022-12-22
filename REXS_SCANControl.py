@@ -640,7 +640,7 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             self.pvmonitors_count+=1
             self.pvmonitors_dict[pvname]=PVMonitor(PVname=pvname,TagName=tag)
             #self.Monitor_MDI.addSubWindow(self.pvmonitors_dict[pvname])
-            self.Monitor_Tab.insertTab(0,self.pvmonitors_dict[pvname],pvname)
+            self.Monitor_Tab.insertTab(0,self.pvmonitors_dict[pvname],self.scanX_name)
             self.pvmonitors_dict[pvname].show()
             self.pvmonitors_dict[pvname].close_sig.connect(self.close_pvmonitor)
         else:
@@ -828,8 +828,9 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 if re.search(label,ch_name):
                     Normailed_Y_data[label]=ch_datalist
         # normalized data by normalized_data=-log(TEY/Au)
-        Norm_data=-np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
-        Normailed_Y_data["Normalized"]=Norm_data.tolist()
+        if "Au" in Normailed_Y_data and "TEY" in Normailed_Y_data:
+            Norm_data=-np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
+            Normailed_Y_data["Normalized"]=Norm_data.tolist()
         return pd.DataFrame(Normailed_Y_data) 
 
 
@@ -946,13 +947,18 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             pass
         # for Y list
         y_label=self.Y_axis_set_cbx.currentText() # ["TEY","Au","PD","Normalized"]
-        y_list=y_data[y_label]
+        # all keys in y data (DataFrame)
+        y_keys= y_data.keys()
+        if y_label in y_keys:
+            y_list=y_data[y_label]
+        else:
+            y_list=y_data[y_keys[0]]
         self.figure.axes.plot(x_list, y_list, marker='o', markersize=4, markerfacecolor='orchid',
                                markeredgecolor='orchid', linestyle='-', color='c',label=y_label)
         self.figure.axes.legend(loc='upper right')
         self.figure.axes.figure.autofmt_xdate(rotation=25)
         # show double Y axis plot 
-        if y_label=="Normalized":
+        if y_label=="Normalized" and "Normalized" in y_data:
             self.twinX_axis.plot(x_list, y_data["TEY"], marker='*', markersize=4, markerfacecolor='limegreen',
                                 markeredgecolor='limegreen', linestyle=':', color='deepskyblue',label="TEY")
             self.twinX_axis.plot(x_list, y_data["Au"], marker='s', markersize=4, markerfacecolor='lightsalmon',

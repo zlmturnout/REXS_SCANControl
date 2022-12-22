@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'UI_ADC_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.0
+## Created by: Qt User Interface Compiler version 6.3.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(300, 235)
+        Form.resize(592, 378)
         Form.setMinimumSize(QSize(300, 230))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -190,7 +190,7 @@ class Ui_Form(object):
 #endif
         self.Voltage_label.setPalette(palette2)
         self.Voltage_label.setFont(font1)
-        self.Voltage_label.setAlignment(Qt.AlignCenter)
+        self.Voltage_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.horizontalLayout_3.addWidget(self.Voltage_label)
 
