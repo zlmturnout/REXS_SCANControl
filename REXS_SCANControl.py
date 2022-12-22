@@ -504,16 +504,13 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         elif daq_ch.device=="pAmeter" and daq_ch.name not in self.All_monitors_dict:
             self.All_monitor_count+=1
             self.All_monitors_dict[daq_ch.name]=pAMeterMonitor(pAname=daq_ch.name,address=daq_ch.address,points=5,full_time=10000,
-            keep_on=1,nplc=1)
+            keep_on=1,nplc=5)
             self.Monitor_Tab.insertTab(0,self.All_monitors_dict[daq_ch.name],daq_ch.name)
             self.All_monitors_dict[daq_ch.name].show()
             self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
             #start the monitor
             self.All_monitors_dict[daq_ch.name].start_monitor()
-
-
-
 
     @Slot(str,float)
     def get_channel_data(self,ch_name:str,value:float):
@@ -642,7 +639,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             # add one monitor
             self.pvmonitors_count+=1
             self.pvmonitors_dict[pvname]=PVMonitor(PVname=pvname,TagName=tag)
-            self.Monitor_MDI.addSubWindow(self.pvmonitors_dict[pvname])
+            #self.Monitor_MDI.addSubWindow(self.pvmonitors_dict[pvname])
+            self.Monitor_Tab.insertTab(0,self.pvmonitors_dict[pvname],pvname)
             self.pvmonitors_dict[pvname].show()
             self.pvmonitors_dict[pvname].close_sig.connect(self.close_pvmonitor)
         else:

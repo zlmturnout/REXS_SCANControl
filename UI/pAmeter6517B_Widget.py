@@ -303,7 +303,7 @@ class Keithley6517BCom(QThread):
             # data_value = float(val.group(1))
             val=resp.split(',')[0].split('NADC')
             data_value = float(val[0])
-        print(f'get new read:{data_value}A')
+        #print(f'get new read:{data_value}A')
         return data_value
 
     def run(self):
@@ -334,6 +334,9 @@ class Keithley6517BCom(QThread):
     
     def __del__(self):
         self._keep_on = 0
+        self.run_flag=False
+    
+    def close(self):
         self.run_flag=False
 
 class pAMeterMonitor(QWidget,Ui_Form):
@@ -398,7 +401,7 @@ class pAMeterMonitor(QWidget,Ui_Form):
                                    markeredgecolor='orchid', linestyle='-', color='c')
         self.data_fig_ax.set_xlabel(x_name, fontsize=12, color='m')
         self.data_fig_ax.set_ylabel(y_name, fontsize=12, color='m')
-        self.data_fig_ax.set_title(self.adc_name,color='#ff5500')
+        self.data_fig_ax.set_title(self.pA_name,color='#ff5500')
         self.data_fig_ax.figure.autofmt_xdate(rotation=25)
         self.data_fig_ax.figure.canvas.draw()
 
@@ -413,9 +416,12 @@ class pAMeterMonitor(QWidget,Ui_Form):
         if self.monitor_on_flag and checked:
             #stop monitor
             self.monitor_on_flag=False
-            self._DaqQthread.__del__()
+            #self._DaqQthread.__del__()
+            self._DaqQthread.close()
             self._DaqQthread.initiate_state_flag=False
             self._DaqQthread.zero_check("ON")
+        elif not self.monitor_on_flag and not checked:
+            self._DaqQthread.zero_check("OFF")
 
     @Slot(int)
     def set_nplc(self,index:int):
@@ -448,7 +454,7 @@ class pAMeterMonitor(QWidget,Ui_Form):
         
     @Slot()
     def on_Start_monitor_btn_clicked(self):
-        """start adc monitor
+        """start pAmeter monitor
         """
         self.start_monitor()
         
@@ -467,7 +473,7 @@ class pAMeterMonitor(QWidget,Ui_Form):
             except Exception as e:
                 print(traceback.format_exc()+str(e))
         else:
-            print(f'{self.adc_name} already monitoring')
+            print(f'{self.pA_name} already monitoring')
     
     @Slot()
     def on_Details_btn_clicked(self):
@@ -543,7 +549,8 @@ class pAMeterMonitor(QWidget,Ui_Form):
         print(f'monitor status: {self.monitor_on_flag}')
         if self.monitor_on_flag:
             self.monitor_on_flag=False
-            self._DaqQthread.__del__()
+            #self._DaqQthread.__del__()
+            self._DaqQthread.close()
             self._DaqQthread.initiate_state_flag=False
     
     #  end of action and data-acquisition-plot part
@@ -607,7 +614,7 @@ class pAMeterMonitor(QWidget,Ui_Form):
             if "excel" in filetype:
                 dict_to_excel(full_data, path, filename + '.xlsx')
             if "sqlite" in filetype:
-                dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'ADCMonitorData.db')
+                dict_to_SQLTable(full_data,filename, SQLiteDB_path, 'PAMonitorData.db')
             if "json" in filetype:
                 dict_to_json(full_data, path, filename + '.json')
             details=f'save to excel/csv/json files.\nFilename:{path+filename}\nSqlite database:{SQLiteDB_path}/SensorData.db\ntablename:{filename}'
@@ -651,7 +658,7 @@ class pAMeterMonitor(QWidget,Ui_Form):
             
             # self.monitor_on_flag=False
             # self._DaqQthread.__del__()
-            # self.close_sig.emit(self.adc_name)
+            # self.close_sig.emit(self.pA_name)
             event.ignore()
             #event.accept()
         else:
@@ -661,8 +668,8 @@ class pAMeterMonitor(QWidget,Ui_Form):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = pAMeterMonitor(pAname="REXS_Au",address=('10.30.95.163',26),func='currents', points= 5, delay= 0.1, 
-        full_time = 10000,keep_on = 0, nplc= 1,emit_data=True)
+    win = pAMeterMonitor(pAname="REXS_Au",address=('10.30.95.170',26),func='currents', points= 5, delay= 0.1, 
+        full_time = 10000,keep_on = 1, nplc= 0.1,emit_data=True)
     win.show()
     sys.exit(app.exec())
         

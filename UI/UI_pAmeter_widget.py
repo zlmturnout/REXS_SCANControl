@@ -17,14 +17,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
     QGroupBox, QHBoxLayout, QLCDNumber, QLabel,
-    QPushButton, QRadioButton, QSizePolicy, QVBoxLayout,
-    QWidget)
+    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(359, 358)
+        Form.resize(819, 358)
         Form.setMinimumSize(QSize(300, 300))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -113,10 +113,14 @@ class Ui_Form(object):
 
         self.horizontalLayout_3.addWidget(self.Device_label)
 
-        self.lcdNumber = QLCDNumber(Form)
-        self.lcdNumber.setObjectName(u"lcdNumber")
-        self.lcdNumber.setMinimumSize(QSize(100, 40))
-        self.lcdNumber.setMaximumSize(QSize(16777215, 40))
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer)
+
+        self.lcd_pA = QLCDNumber(Form)
+        self.lcd_pA.setObjectName(u"lcd_pA")
+        self.lcd_pA.setMinimumSize(QSize(100, 40))
+        self.lcd_pA.setMaximumSize(QSize(16777215, 40))
         palette1 = QPalette()
         brush6 = QBrush(QColor(255, 106, 128, 255))
         brush6.setStyle(Qt.SolidPattern)
@@ -126,6 +130,7 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Active, QPalette.Button, brush7)
         palette1.setBrush(QPalette.Active, QPalette.Text, brush6)
         palette1.setBrush(QPalette.Active, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Active, QPalette.Base, brush7)
         palette1.setBrush(QPalette.Active, QPalette.Window, brush7)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Active, QPalette.PlaceholderText, brush6)
@@ -134,6 +139,7 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Inactive, QPalette.Button, brush7)
         palette1.setBrush(QPalette.Inactive, QPalette.Text, brush6)
         palette1.setBrush(QPalette.Inactive, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Inactive, QPalette.Base, brush7)
         palette1.setBrush(QPalette.Inactive, QPalette.Window, brush7)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Inactive, QPalette.PlaceholderText, brush6)
@@ -142,21 +148,22 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Disabled, QPalette.Button, brush7)
         palette1.setBrush(QPalette.Disabled, QPalette.Text, brush6)
         palette1.setBrush(QPalette.Disabled, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Disabled, QPalette.Base, brush7)
         palette1.setBrush(QPalette.Disabled, QPalette.Window, brush7)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush6)
 #endif
-        self.lcdNumber.setPalette(palette1)
-        self.lcdNumber.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
+        self.lcd_pA.setPalette(palette1)
+        self.lcd_pA.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
 "color: rgb(255, 106, 128);")
-        self.lcdNumber.setFrameShape(QFrame.Box)
-        self.lcdNumber.setFrameShadow(QFrame.Raised)
-        self.lcdNumber.setSmallDecimalPoint(True)
-        self.lcdNumber.setDigitCount(5)
-        self.lcdNumber.setMode(QLCDNumber.Dec)
-        self.lcdNumber.setProperty("value", 0.000000000000000)
+        self.lcd_pA.setFrameShape(QFrame.Box)
+        self.lcd_pA.setFrameShadow(QFrame.Raised)
+        self.lcd_pA.setSmallDecimalPoint(True)
+        self.lcd_pA.setDigitCount(5)
+        self.lcd_pA.setMode(QLCDNumber.Dec)
+        self.lcd_pA.setProperty("value", 0.000000000000000)
 
-        self.horizontalLayout_3.addWidget(self.lcdNumber)
+        self.horizontalLayout_3.addWidget(self.lcd_pA)
 
         self.Current_label = QLabel(Form)
         self.Current_label.setObjectName(u"Current_label")
@@ -191,9 +198,13 @@ class Ui_Form(object):
 #endif
         self.Current_label.setPalette(palette2)
         self.Current_label.setFont(font1)
-        self.Current_label.setAlignment(Qt.AlignCenter)
+        self.Current_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.horizontalLayout_3.addWidget(self.Current_label)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
@@ -250,7 +261,7 @@ class Ui_Form(object):
 #endif
         self.Unit_label_2.setPalette(palette4)
         self.Unit_label_2.setFont(font1)
-        self.Unit_label_2.setAlignment(Qt.AlignCenter)
+        self.Unit_label_2.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.horizontalLayout.addWidget(self.Unit_label_2)
 
@@ -330,6 +341,10 @@ class Ui_Form(object):
 "QPushButton:pressed{background-color:rgb(255, 91, 58);}")
 
         self.horizontalLayout_2.addWidget(self.Savedata_btn)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
