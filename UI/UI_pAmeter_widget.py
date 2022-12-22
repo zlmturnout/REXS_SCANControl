@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UI_ADC_widget.ui'
+## Form generated from reading UI file 'UI_pAmeter_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.0
+## Created by: Qt User Interface Compiler version 6.4.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,14 +17,15 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
     QGroupBox, QHBoxLayout, QLCDNumber, QLabel,
-    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
+    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(592, 378)
-        Form.setMinimumSize(QSize(300, 230))
+        Form.resize(819, 358)
+        Form.setMinimumSize(QSize(300, 300))
         self.gridLayout = QGridLayout(Form)
         self.gridLayout.setObjectName(u"gridLayout")
         self.verticalLayout_3 = QVBoxLayout()
@@ -112,10 +113,14 @@ class Ui_Form(object):
 
         self.horizontalLayout_3.addWidget(self.Device_label)
 
-        self.lcdNumber = QLCDNumber(Form)
-        self.lcdNumber.setObjectName(u"lcdNumber")
-        self.lcdNumber.setMinimumSize(QSize(100, 40))
-        self.lcdNumber.setMaximumSize(QSize(16777215, 40))
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer)
+
+        self.lcd_pA = QLCDNumber(Form)
+        self.lcd_pA.setObjectName(u"lcd_pA")
+        self.lcd_pA.setMinimumSize(QSize(100, 40))
+        self.lcd_pA.setMaximumSize(QSize(16777215, 40))
         palette1 = QPalette()
         brush6 = QBrush(QColor(255, 106, 128, 255))
         brush6.setStyle(Qt.SolidPattern)
@@ -125,6 +130,7 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Active, QPalette.Button, brush7)
         palette1.setBrush(QPalette.Active, QPalette.Text, brush6)
         palette1.setBrush(QPalette.Active, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Active, QPalette.Base, brush7)
         palette1.setBrush(QPalette.Active, QPalette.Window, brush7)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Active, QPalette.PlaceholderText, brush6)
@@ -133,6 +139,7 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Inactive, QPalette.Button, brush7)
         palette1.setBrush(QPalette.Inactive, QPalette.Text, brush6)
         palette1.setBrush(QPalette.Inactive, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Inactive, QPalette.Base, brush7)
         palette1.setBrush(QPalette.Inactive, QPalette.Window, brush7)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Inactive, QPalette.PlaceholderText, brush6)
@@ -141,28 +148,29 @@ class Ui_Form(object):
         palette1.setBrush(QPalette.Disabled, QPalette.Button, brush7)
         palette1.setBrush(QPalette.Disabled, QPalette.Text, brush6)
         palette1.setBrush(QPalette.Disabled, QPalette.ButtonText, brush6)
+        palette1.setBrush(QPalette.Disabled, QPalette.Base, brush7)
         palette1.setBrush(QPalette.Disabled, QPalette.Window, brush7)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette1.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush6)
 #endif
-        self.lcdNumber.setPalette(palette1)
-        self.lcdNumber.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
+        self.lcd_pA.setPalette(palette1)
+        self.lcd_pA.setStyleSheet(u"background-color: rgb(255, 255, 255);\n"
 "color: rgb(255, 106, 128);")
-        self.lcdNumber.setFrameShape(QFrame.Box)
-        self.lcdNumber.setFrameShadow(QFrame.Raised)
-        self.lcdNumber.setSmallDecimalPoint(True)
-        self.lcdNumber.setDigitCount(5)
-        self.lcdNumber.setMode(QLCDNumber.Dec)
-        self.lcdNumber.setProperty("value", 0.000000000000000)
+        self.lcd_pA.setFrameShape(QFrame.Box)
+        self.lcd_pA.setFrameShadow(QFrame.Raised)
+        self.lcd_pA.setSmallDecimalPoint(True)
+        self.lcd_pA.setDigitCount(5)
+        self.lcd_pA.setMode(QLCDNumber.Dec)
+        self.lcd_pA.setProperty("value", 0.000000000000000)
 
-        self.horizontalLayout_3.addWidget(self.lcdNumber)
+        self.horizontalLayout_3.addWidget(self.lcd_pA)
 
-        self.Voltage_label = QLabel(Form)
-        self.Voltage_label.setObjectName(u"Voltage_label")
-        sizePolicy1.setHeightForWidth(self.Voltage_label.sizePolicy().hasHeightForWidth())
-        self.Voltage_label.setSizePolicy(sizePolicy1)
-        self.Voltage_label.setMinimumSize(QSize(40, 40))
-        self.Voltage_label.setMaximumSize(QSize(3160, 40))
+        self.Current_label = QLabel(Form)
+        self.Current_label.setObjectName(u"Current_label")
+        sizePolicy1.setHeightForWidth(self.Current_label.sizePolicy().hasHeightForWidth())
+        self.Current_label.setSizePolicy(sizePolicy1)
+        self.Current_label.setMinimumSize(QSize(40, 40))
+        self.Current_label.setMaximumSize(QSize(3160, 40))
         palette2 = QPalette()
         palette2.setBrush(QPalette.Active, QPalette.WindowText, brush)
         palette2.setBrush(QPalette.Active, QPalette.Text, brush)
@@ -188,11 +196,15 @@ class Ui_Form(object):
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette2.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush10)
 #endif
-        self.Voltage_label.setPalette(palette2)
-        self.Voltage_label.setFont(font1)
-        self.Voltage_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.Current_label.setPalette(palette2)
+        self.Current_label.setFont(font1)
+        self.Current_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
-        self.horizontalLayout_3.addWidget(self.Voltage_label)
+        self.horizontalLayout_3.addWidget(self.Current_label)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_2)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
@@ -205,48 +217,73 @@ class Ui_Form(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.Channel_cbx = QComboBox(self.Details_box)
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.addItem("")
-        self.Channel_cbx.setObjectName(u"Channel_cbx")
-        self.Channel_cbx.setMinimumSize(QSize(120, 40))
-        self.Channel_cbx.setMaximumSize(QSize(120, 40))
+        self.ZCHK_rbtn = QRadioButton(self.Details_box)
+        self.ZCHK_rbtn.setObjectName(u"ZCHK_rbtn")
         palette3 = QPalette()
+        palette3.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        palette3.setBrush(QPalette.Inactive, QPalette.WindowText, brush2)
+        palette3.setBrush(QPalette.Disabled, QPalette.WindowText, brush4)
+        self.ZCHK_rbtn.setPalette(palette3)
+        self.ZCHK_rbtn.setFont(font1)
+
+        self.horizontalLayout.addWidget(self.ZCHK_rbtn)
+
+        self.Unit_label_2 = QLabel(self.Details_box)
+        self.Unit_label_2.setObjectName(u"Unit_label_2")
+        sizePolicy1.setHeightForWidth(self.Unit_label_2.sizePolicy().hasHeightForWidth())
+        self.Unit_label_2.setSizePolicy(sizePolicy1)
+        self.Unit_label_2.setMinimumSize(QSize(40, 40))
+        self.Unit_label_2.setMaximumSize(QSize(3160, 40))
+        palette4 = QPalette()
         brush11 = QBrush(QColor(0, 170, 255, 255))
         brush11.setStyle(Qt.SolidPattern)
-        palette3.setBrush(QPalette.Active, QPalette.Text, brush11)
-        palette3.setBrush(QPalette.Inactive, QPalette.Text, brush2)
-        palette3.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        self.Channel_cbx.setPalette(palette3)
-        font2 = QFont()
-        font2.setFamilies([u"Arial"])
-        font2.setPointSize(16)
-        font2.setBold(True)
-        self.Channel_cbx.setFont(font2)
-        self.Channel_cbx.setToolTipDuration(5000)
-
-        self.horizontalLayout.addWidget(self.Channel_cbx)
-
-        self.Range_cbx = QComboBox(self.Details_box)
-        self.Range_cbx.addItem("")
-        self.Range_cbx.addItem("")
-        self.Range_cbx.addItem("")
-        self.Range_cbx.addItem("")
-        self.Range_cbx.setObjectName(u"Range_cbx")
-        self.Range_cbx.setMinimumSize(QSize(120, 40))
-        self.Range_cbx.setMaximumSize(QSize(120, 40))
-        palette4 = QPalette()
-        palette4.setBrush(QPalette.Active, QPalette.Text, brush11)
+        palette4.setBrush(QPalette.Active, QPalette.WindowText, brush11)
+        palette4.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette4.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+        brush12 = QBrush(QColor(255, 85, 0, 128))
+        brush12.setStyle(Qt.SolidPattern)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette4.setBrush(QPalette.Active, QPalette.PlaceholderText, brush12)
+#endif
+        palette4.setBrush(QPalette.Inactive, QPalette.WindowText, brush2)
         palette4.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette4.setBrush(QPalette.Inactive, QPalette.ButtonText, brush2)
+        brush13 = QBrush(QColor(0, 0, 0, 128))
+        brush13.setStyle(Qt.SolidPattern)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette4.setBrush(QPalette.Inactive, QPalette.PlaceholderText, brush13)
+#endif
+        palette4.setBrush(QPalette.Disabled, QPalette.WindowText, brush4)
         palette4.setBrush(QPalette.Disabled, QPalette.Text, brush4)
-        self.Range_cbx.setPalette(palette4)
-        self.Range_cbx.setFont(font1)
-        self.Range_cbx.setToolTipDuration(5000)
-        self.Range_cbx.setEditable(False)
+        palette4.setBrush(QPalette.Disabled, QPalette.ButtonText, brush4)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        palette4.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush13)
+#endif
+        self.Unit_label_2.setPalette(palette4)
+        self.Unit_label_2.setFont(font1)
+        self.Unit_label_2.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.horizontalLayout.addWidget(self.Range_cbx)
+        self.horizontalLayout.addWidget(self.Unit_label_2)
+
+        self.NPLC_cbx = QComboBox(self.Details_box)
+        self.NPLC_cbx.addItem("")
+        self.NPLC_cbx.addItem("")
+        self.NPLC_cbx.addItem("")
+        self.NPLC_cbx.addItem("")
+        self.NPLC_cbx.addItem("")
+        self.NPLC_cbx.setObjectName(u"NPLC_cbx")
+        self.NPLC_cbx.setMinimumSize(QSize(95, 40))
+        self.NPLC_cbx.setMaximumSize(QSize(120, 40))
+        palette5 = QPalette()
+        palette5.setBrush(QPalette.Active, QPalette.Text, brush11)
+        palette5.setBrush(QPalette.Inactive, QPalette.Text, brush2)
+        palette5.setBrush(QPalette.Disabled, QPalette.Text, brush4)
+        self.NPLC_cbx.setPalette(palette5)
+        self.NPLC_cbx.setFont(font1)
+        self.NPLC_cbx.setToolTipDuration(5000)
+        self.NPLC_cbx.setEditable(False)
+
+        self.horizontalLayout.addWidget(self.NPLC_cbx)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -259,11 +296,11 @@ class Ui_Form(object):
         self.Start_monitor_btn.setSizePolicy(sizePolicy)
         self.Start_monitor_btn.setMinimumSize(QSize(80, 40))
         self.Start_monitor_btn.setMaximumSize(QSize(100, 40))
-        font3 = QFont()
-        font3.setFamilies([u"Cambria"])
-        font3.setPointSize(14)
-        font3.setBold(True)
-        self.Start_monitor_btn.setFont(font3)
+        font2 = QFont()
+        font2.setFamilies([u"Cambria"])
+        font2.setPointSize(14)
+        font2.setBold(True)
+        self.Start_monitor_btn.setFont(font2)
         self.Start_monitor_btn.setStyleSheet(u"QPushButton{background-color: rgb(0, 170, 127);selection-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);}\n"
 "\n"
@@ -279,7 +316,7 @@ class Ui_Form(object):
         self.Stop_monitor_btn.setSizePolicy(sizePolicy)
         self.Stop_monitor_btn.setMinimumSize(QSize(80, 40))
         self.Stop_monitor_btn.setMaximumSize(QSize(100, 40))
-        self.Stop_monitor_btn.setFont(font3)
+        self.Stop_monitor_btn.setFont(font2)
         self.Stop_monitor_btn.setStyleSheet(u"QPushButton{background-color: rgb(0, 170, 127);selection-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);}\n"
 "\n"
@@ -295,7 +332,7 @@ class Ui_Form(object):
         self.Savedata_btn.setSizePolicy(sizePolicy)
         self.Savedata_btn.setMinimumSize(QSize(80, 40))
         self.Savedata_btn.setMaximumSize(QSize(100, 40))
-        self.Savedata_btn.setFont(font3)
+        self.Savedata_btn.setFont(font2)
         self.Savedata_btn.setStyleSheet(u"QPushButton{background-color: rgb(0, 170, 127);selection-color: rgb(255, 85, 127);\n"
 "color: rgb(255, 255, 255);}\n"
 "\n"
@@ -304,6 +341,10 @@ class Ui_Form(object):
 "QPushButton:pressed{background-color:rgb(255, 91, 58);}")
 
         self.horizontalLayout_2.addWidget(self.Savedata_btn)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -330,26 +371,20 @@ class Ui_Form(object):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"Form", None))
         self.Details_btn.setText(QCoreApplication.translate("Form", u">--<", None))
         self.Device_label.setText(QCoreApplication.translate("Form", u"Device name", None))
-        self.Voltage_label.setText(QCoreApplication.translate("Form", u"V", None))
+        self.Current_label.setText(QCoreApplication.translate("Form", u"pA", None))
         self.Details_box.setTitle(QCoreApplication.translate("Form", u"ControlPannel", None))
-        self.Channel_cbx.setItemText(0, QCoreApplication.translate("Form", u"CH0", None))
-        self.Channel_cbx.setItemText(1, QCoreApplication.translate("Form", u"CH1", None))
-        self.Channel_cbx.setItemText(2, QCoreApplication.translate("Form", u"CH2", None))
-        self.Channel_cbx.setItemText(3, QCoreApplication.translate("Form", u"CH3", None))
+        self.ZCHK_rbtn.setText(QCoreApplication.translate("Form", u"ZeroCheck", None))
+        self.Unit_label_2.setText(QCoreApplication.translate("Form", u"Speed:", None))
+        self.NPLC_cbx.setItemText(0, QCoreApplication.translate("Form", u"Fastest", None))
+        self.NPLC_cbx.setItemText(1, QCoreApplication.translate("Form", u"fast", None))
+        self.NPLC_cbx.setItemText(2, QCoreApplication.translate("Form", u"normal", None))
+        self.NPLC_cbx.setItemText(3, QCoreApplication.translate("Form", u"slow", None))
+        self.NPLC_cbx.setItemText(4, QCoreApplication.translate("Form", u"slowest", None))
 
 #if QT_CONFIG(tooltip)
-        self.Channel_cbx.setToolTip(QCoreApplication.translate("Form", u"Set ADC Channel", None))
+        self.NPLC_cbx.setToolTip(QCoreApplication.translate("Form", u"set ADC volts", None))
 #endif // QT_CONFIG(tooltip)
-        self.Channel_cbx.setPlaceholderText("")
-        self.Range_cbx.setItemText(0, QCoreApplication.translate("Form", u"+/-  1V", None))
-        self.Range_cbx.setItemText(1, QCoreApplication.translate("Form", u"+/-  2V", None))
-        self.Range_cbx.setItemText(2, QCoreApplication.translate("Form", u"+/-  5V", None))
-        self.Range_cbx.setItemText(3, QCoreApplication.translate("Form", u"+/-  10V", None))
-
-#if QT_CONFIG(tooltip)
-        self.Range_cbx.setToolTip(QCoreApplication.translate("Form", u"set ADC volts", None))
-#endif // QT_CONFIG(tooltip)
-        self.Range_cbx.setPlaceholderText("")
+        self.NPLC_cbx.setPlaceholderText("")
         self.Start_monitor_btn.setText(QCoreApplication.translate("Form", u"Start", None))
         self.Stop_monitor_btn.setText(QCoreApplication.translate("Form", u"Stop", None))
         self.Savedata_btn.setText(QCoreApplication.translate("Form", u"Save", None))

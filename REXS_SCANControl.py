@@ -48,6 +48,8 @@ from UI.SQLDataViewPlot import ViewSQLiteData
 from UI.UI_REXS_SCAN import Ui_MainWindow
 # ADC monitor
 from UI.ADC_Widget import ADCMonitor
+# pAmeter monitor
+from UI.pAmeter6517B_Widget import pAMeterMonitor
 # device address
 from Architect.Device_address import EndStationAddress
 # save path info
@@ -76,7 +78,7 @@ full_data = {'BPM-X pos(um)': self._plot_X_list, 'BPM-Z pos(um)': self._plot_Z_l
     Returns:
         _type_: _description_
 """
-ChannelDATA=namedtuple('ChannelDATA',field_names=["Name","Address","Device"])
+#ChannelDATA=namedtuple('ChannelDATA',field_names=["Name","Address","Device"])
 
 
 class DATAChannel(object):
@@ -354,7 +356,9 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         self.All_monitors_dict={}
         self.All_monitor_count=0
         self.Select_endstation_cbx.currentIndexChanged['int'].connect(self.set_endstation)
-        self.set_endstation(0)
+        self.Select_instrument_cbx.currentIndexChanged['int'].connect(self.set_instrument)
+        self.set_endstation(0) # default REXS station
+        self.set_instrument(0) # default ADC
         # flag for monitoring on
         self.channel_monitor_on_flag=False
 
@@ -397,16 +401,16 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
         for ch_name,pv_dict in self.scanX_channel_dict.items():
             self.Scan_Channel_cbx.addItem(ch_name)
 
-
+    @log_exceptions(log_func=logger.error)
     @Slot()
     def on_Start_Acqusition_btn_clicked(self):
         """check data channel and start acquiring data
         """
         if not self.channel_monitor_on_flag:
             try:
-                self.Full_DataChannnels={}
-                self.set_channels()
-                #print(self.Full_DataChannnels)
+                #self.Full_DataChannnels={}
+                #self.set_channels()
+                print(self.Full_DataChannnels)
                 for ch_name,daq_ch in self.Full_DataChannnels.items():
                     self.add_channel_monitor(daq_ch)
             except Exception as e:
@@ -414,40 +418,100 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 logger.error(traceback.format_exc() + str(e))
             else:
                 self.channel_monitor_on_flag=True
-    
-    def set_channels(self):
-        # ADC channels
-        for name,checkbox in self.adc_channels.items():
-            if checkbox.isChecked():
-                if name not in self.active_data_dict:
-                    self.active_data_dict[name]=[]
-                    self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
-        # pAmeter channels
-        for name,checkbox in self.pA_channels.items():
-            if checkbox.isChecked():
-                if name not in self.active_data_dict:
-                    self.active_data_dict[name]=[]
-                    self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
+
+    @Slot(int)
+    def set_instrument(self,index:int):
+        """set the instrument used to data acquisition
+        either ADC or pAmeter
+        Args:
+            index (int): index of the selected cbx
+        """
+        print(f'current index:{index}')
+        self.active_data_dict={}
+        self.Full_DataChannnels={}
+        if index==0:
+            # choose ADC
+            self.Instrument_tab.setTabEnabled(0,True)
+            self.Instrument_tab.setTabEnabled(1,False)
+            # set ADC channels
+            for name,checkbox in self.adc_channels.items():
+                if checkbox.isChecked():
+                    if name not in self.active_data_dict:
+                        print(f'add new channel {name}')
+                        self.active_data_dict[name]=[]
+                        self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+        elif index==1:
+            # choose pAmeter
+            self.Instrument_tab.setTabEnabled(1,True)
+            self.Instrument_tab.setTabEnabled(0,False)
+            # pAmeter channels
+            for name,checkbox in self.pA_channels.items():
+                if checkbox.isChecked():
+                    if name not in self.active_data_dict:
+                        print(f'add new channel {name}')
+                        self.active_data_dict[name]=[]
+                        self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
+
+    # def set_channels(self):
+    #     # ADC channels
+    #     for name,checkbox in self.adc_channels.items():
+    #         if checkbox.isChecked():
+    #             if name not in self.active_data_dict:
+    #                 self.active_data_dict[name]=[]
+    #                 self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="ADC")
+    #     # pAmeter channels
+    #     for name,checkbox in self.pA_channels.items():
+    #         if checkbox.isChecked():
+    #             if name not in self.active_data_dict:
+    #                 self.active_data_dict[name]=[]
+    #                 self.Full_DataChannnels[name]=DATAChannel(name=name,address=self.endStation_Address[name],device="pAmeter")
+
+    # def add_channel_monitor(self,daq_ch:DATAChannel):
+    #     """add one channel monitor 
+
+    #     Args:
+    #         daq_ch (DATAChannel): provide a DATAChannel 
+    #     """             
+    #     if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
+    #         # adc address=(host,port,channel,ul_range_n)
+    #         #print(daq_ch.address[2],daq_ch.name)
+    #         self.All_monitor_count+=1
+    #         self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
+    #         board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
+    #         self.Monitor_MDI.addSubWindow(self.All_monitors_dict[daq_ch.name])
+    #         self.All_monitors_dict[daq_ch.name].show()
+    #         self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
+    #         self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
+    #         #start the monitor
+    #         self.All_monitors_dict[daq_ch.name].start_monitor()
 
     def add_channel_monitor(self,daq_ch:DATAChannel):
-        """add one channel monitor 
+        """add one channel monitor to tab widget
 
         Args:
             daq_ch (DATAChannel): provide a DATAChannel 
-        """             
+        """
         if daq_ch.device=="ADC" and daq_ch.name not in self.All_monitors_dict:
-            # adc address=(host,port,channel,ul_range_n)
-            #print(daq_ch.address[2],daq_ch.name)
             self.All_monitor_count+=1
             self.All_monitors_dict[daq_ch.name]=ADCMonitor(ADCname=daq_ch.name,host=daq_ch.address[0],port=daq_ch.address[1],
             board_num=self.endStation_num,channel=daq_ch.address[2],ul_range_n=daq_ch.address[-1])
-            self.Monitor_MDI.addSubWindow(self.All_monitors_dict[daq_ch.name])
+            self.Monitor_Tab.insertTab(0,self.All_monitors_dict[daq_ch.name],daq_ch.name)
             self.All_monitors_dict[daq_ch.name].show()
             self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
             self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
             #start the monitor
             self.All_monitors_dict[daq_ch.name].start_monitor()
-    
+        elif daq_ch.device=="pAmeter" and daq_ch.name not in self.All_monitors_dict:
+            self.All_monitor_count+=1
+            self.All_monitors_dict[daq_ch.name]=pAMeterMonitor(pAname=daq_ch.name,address=daq_ch.address,points=5,full_time=10000,
+            keep_on=1,nplc=5)
+            self.Monitor_Tab.insertTab(0,self.All_monitors_dict[daq_ch.name],daq_ch.name)
+            self.All_monitors_dict[daq_ch.name].show()
+            self.All_monitors_dict[daq_ch.name].emit_data_sig.connect(self.get_channel_data)
+            self.All_monitors_dict[daq_ch.name].close_sig.connect(self.close_channel_monitor)
+            #start the monitor
+            self.All_monitors_dict[daq_ch.name].start_monitor()
+
     @Slot(str,float)
     def get_channel_data(self,ch_name:str,value:float):
         #print(f'channel: {ch_name} get a new value: {value}')
@@ -575,7 +639,8 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             # add one monitor
             self.pvmonitors_count+=1
             self.pvmonitors_dict[pvname]=PVMonitor(PVname=pvname,TagName=tag)
-            self.Monitor_MDI.addSubWindow(self.pvmonitors_dict[pvname])
+            #self.Monitor_MDI.addSubWindow(self.pvmonitors_dict[pvname])
+            self.Monitor_Tab.insertTab(0,self.pvmonitors_dict[pvname],self.scanX_name)
             self.pvmonitors_dict[pvname].show()
             self.pvmonitors_dict[pvname].close_sig.connect(self.close_pvmonitor)
         else:
@@ -763,8 +828,9 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
                 if re.search(label,ch_name):
                     Normailed_Y_data[label]=ch_datalist
         # normalized data by normalized_data=-log(TEY/Au)
-        Norm_data=-np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
-        Normailed_Y_data["Normalized"]=Norm_data.tolist()
+        if "Au" in Normailed_Y_data and "TEY" in Normailed_Y_data:
+            Norm_data=-np.log(np.array(Normailed_Y_data["Au"])/np.array(Normailed_Y_data["TEY"]))
+            Normailed_Y_data["Normalized"]=Norm_data.tolist()
         return pd.DataFrame(Normailed_Y_data) 
 
 
@@ -881,13 +947,18 @@ class REXSScanPlot(QMainWindow, Ui_MainWindow):
             pass
         # for Y list
         y_label=self.Y_axis_set_cbx.currentText() # ["TEY","Au","PD","Normalized"]
-        y_list=y_data[y_label]
+        # all keys in y data (DataFrame)
+        y_keys= y_data.keys()
+        if y_label in y_keys:
+            y_list=y_data[y_label]
+        else:
+            y_list=y_data[y_keys[0]]
         self.figure.axes.plot(x_list, y_list, marker='o', markersize=4, markerfacecolor='orchid',
                                markeredgecolor='orchid', linestyle='-', color='c',label=y_label)
         self.figure.axes.legend(loc='upper right')
         self.figure.axes.figure.autofmt_xdate(rotation=25)
         # show double Y axis plot 
-        if y_label=="Normalized":
+        if y_label=="Normalized" and "Normalized" in y_data:
             self.twinX_axis.plot(x_list, y_data["TEY"], marker='*', markersize=4, markerfacecolor='limegreen',
                                 markeredgecolor='limegreen', linestyle=':', color='deepskyblue',label="TEY")
             self.twinX_axis.plot(x_list, y_data["Au"], marker='s', markersize=4, markerfacecolor='lightsalmon',
